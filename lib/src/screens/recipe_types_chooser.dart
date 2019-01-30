@@ -5,7 +5,6 @@ class RecipeTypeChooser extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final RecipeBloc bloc = RecipeProvider.of(context);
-    print("Bloc: $bloc");
 
     return Scaffold(
       appBar: AppBar(
@@ -45,12 +44,12 @@ class RecipeTypeChooser extends StatelessWidget {
       itemBuilder: (BuildContext context, int index) {
         return CheckboxListTile(
           title: Text("${recipeTypes[index]}"),
-          value: false,
-          onChanged: (bool e) => something(),
+          value: bloc.isSelectedRecipeType(index),
+          onChanged: (bool b) {
+            bloc.setSelectedRecipeType(index, b);
+          },
         );
       },
     );
   }
-
-  void something() {}
 }

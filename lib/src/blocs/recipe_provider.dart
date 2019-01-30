@@ -15,7 +15,6 @@ class RecipeProvider extends InheritedWidget {
   bool updateShouldNotify(_) => true;
 
   static RecipeBloc of(BuildContext context) {
-    print("before bloc");
     return (context.inheritFromWidgetOfExactType(RecipeProvider)
             as RecipeProvider)
         .bloc;
