@@ -28,7 +28,7 @@ class IngredientsChooserState extends State<IngredientsChooser> {
   Widget buildBody(BuildContext context, RecipeBloc bloc) {
     return Container(
       child: Column(
-        children: [
+        children: <Widget>[
           const Center(
             child: Text(
               "Select the recipe types you want to search for :)",

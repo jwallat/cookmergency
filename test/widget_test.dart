@@ -7,8 +7,6 @@
 
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
-
-import 'package:cookmergency/main.dart';
 import "package:cookmergency/src/app.dart";
 
 void main() {

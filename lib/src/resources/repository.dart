@@ -3,11 +3,11 @@ class Repository {
 
   /// should be returning future from db
   List<String> getIngredients() {
-    return ["Eier", "Mehl", "Milch", "Nutella"];
+    return <String>["Eier", "Mehl", "Milch", "Nutella"];
   }
 
   /// should be returning future from local/remote db
   List<String> getRecipeTypes() {
-    return ["Frühstück", "Nudelgerichte", "Fisch", "Desserts"];
+    return <String>["Frühstück", "Nudelgerichte", "Fisch", "Desserts"];
   }
 }

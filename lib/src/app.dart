@@ -1,8 +1,8 @@
 import "package:flutter/material.dart";
-import "screens/recipe_types_chooser.dart";
-import "screens/ingredients_chooser.dart";
-import "screens/recipes_list.dart";
 import "blocs/recipe_provider.dart";
+import "screens/ingredients_chooser.dart";
+import "screens/recipe_types_chooser.dart";
+import "screens/recipes_list.dart";
 
 class App extends StatelessWidget {
   @override
@@ -15,7 +15,7 @@ class App extends StatelessWidget {
     );
   }
 
-  Route routes(RouteSettings settings) {
+  Route<dynamic> routes(RouteSettings settings) {
     if (settings.name == "/") {
       return MaterialPageRoute<dynamic>(
         builder: (BuildContext context) {
@@ -36,9 +36,15 @@ class App extends StatelessWidget {
       return MaterialPageRoute<dynamic>(
         builder: (BuildContext context) {
           // load recipes for bloc
-          final RecipeBloc bloc = RecipeProvider.of(context);
+          //final RecipeBloc bloc = RecipeProvider.of(context);
 
           return RecipesList();
+        },
+      );
+    } else {
+      return MaterialPageRoute<dynamic>(
+        builder: (BuildContext context) {
+          return RecipeTypeChooser();
         },
       );
     }
