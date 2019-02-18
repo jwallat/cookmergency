@@ -1,6 +1,7 @@
 import "package:flutter/material.dart";
 import "blocs/recipe_provider.dart";
 import "screens/ingredients_chooser.dart";
+import "screens/recipe_details.dart";
 import "screens/recipe_types_chooser.dart";
 import "screens/recipes_list.dart";
 
@@ -44,7 +45,14 @@ class App extends StatelessWidget {
     } else {
       return MaterialPageRoute<dynamic>(
         builder: (BuildContext context) {
-          return RecipeTypeChooser();
+          final RecipeBloc recipeBloc = RecipeProvider.of(context);
+          final int recipeId = int.parse(settings.name.replaceFirst("/", ""));
+
+          recipeBloc.fetchRecipe(recipeId);
+
+          return RecipeDetails(
+            recipeId: recipeId,
+          );
         },
       );
     }
