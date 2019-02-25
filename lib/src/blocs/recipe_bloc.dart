@@ -1,9 +1,12 @@
+import "package:rxdart/rxdart.dart";
 import "../resources/repository.dart";
 
 class RecipeBloc {
   final Repository repository = Repository();
   final Map<String, bool> _recipeTypes = <String, bool>{};
   final Map<String, bool> _ingredients = <String, bool>{};
+
+  final PublishSubject<int> _recipeFetcher = PublishSubject<int>();
 
   /// should use streams and return items that way
   // TODO(jw): call load functions from somewhere
@@ -30,6 +33,8 @@ class RecipeBloc {
     }
   }
 
+  Function(int) get fetchRecipe => _recipeFetcher.sink.add;
+
   Map<String, bool> getRecipeTypes() {
     return _recipeTypes;
   }
@@ -48,5 +53,9 @@ class RecipeBloc {
 
   void setSelectedIngredient(String ingredient, bool value) {
     _ingredients[ingredient] = value;
+  }
+
+  void dispose() {
+    _recipeFetcher.close();
   }
 }
