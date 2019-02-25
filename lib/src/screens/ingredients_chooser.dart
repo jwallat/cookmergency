@@ -31,7 +31,7 @@ class IngredientsChooserState extends State<IngredientsChooser> {
         children: <Widget>[
           const Center(
             child: Text(
-              "Select the recipe types you want to search for :)",
+              "Select the ingredients that you have :)",
               textScaleFactor: 1.5,
             ),
           ),

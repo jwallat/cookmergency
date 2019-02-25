@@ -9,11 +9,13 @@ class RecipeBloc {
   // TODO(jw): call load functions from somewhere
   void loadIngredients() {
     if (_ingredients.isEmpty) {
-      for (String ingredient in repository.getIngredients()) {
+      for (String ingredient in repository.fetchIngredients()) {
         _ingredients[ingredient] = false;
       }
     }
   }
+
+  void fetchIngredientTypes() {}
 
   Map<String, bool> getIngredients() {
     return _ingredients;

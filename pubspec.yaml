@@ -20,6 +20,7 @@ dependencies:
   # Use with the CupertinoIcons class for iOS style icons.
   cupertino_icons: ^0.1.2
 
+  sqljocky5: ^2.2.1
   rxdart: ^0.18.0
 
 dev_dependencies:

@@ -296,7 +296,7 @@ linter:
 
     - slash_for_doc_comments
 
-    - sort_constructors_first
+    #- sort_constructors_first
 
     - sort_pub_dependencies
 

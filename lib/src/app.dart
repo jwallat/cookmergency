@@ -21,6 +21,7 @@ class App extends StatelessWidget {
         builder: (BuildContext context) {
           // load data
           final RecipeBloc bloc = RecipeProvider.of(context);
+          print("load data");
           bloc.loadRecipeTypes();
           bloc.loadIngredients();
           return RecipeTypeChooser();
