@@ -1,3 +1,4 @@
+import "dart:async";
 import "../models/recipe_model.dart";
 import "../resources/remote_recipe_provider.dart";
 
@@ -11,11 +12,16 @@ class Repository {
   }
 
   Future<List<String>> fetchIngredientTypes() {
-    return remoteRecipeProvider.fetchIngredientTypes();
+    /// achtung!!!!!
+    return null; //remoteRecipeProvider.fetchRecipeTypes();
   }
 
   /// should be returning future from local/remote db
   List<String> getRecipeTypes() {
     return <String>["Frühstück", "Nudelgerichte", "Fisch", "Desserts"];
+  }
+
+  Future<List<String>> fetchRecipeTypes() async {
+    return remoteRecipeProvider.fetchRecipeTypes();
   }
 }

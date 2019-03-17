@@ -13,9 +13,9 @@ class RecipeTypeChooserState extends State<RecipeTypeChooser> {
   Widget build(BuildContext context) {
     final RecipeBloc bloc = RecipeProvider.of(context);
 
-    if (values.isEmpty) {
-      values.addAll(bloc.getRecipeTypes());
-    }
+    // if (values.isEmpty) {
+    //   values.addAll(bloc.getRecipeTypes());
+    // }
 
     return Scaffold(
       appBar: AppBar(
@@ -61,19 +61,38 @@ class RecipeTypeChooserState extends State<RecipeTypeChooser> {
   }
 
   Widget buildRecipeTypeList(BuildContext context, RecipeBloc bloc) {
-    final List<String> recipeTypes = bloc.getRecipeTypes().keys.toList();
-    return ListView.builder(
-      itemCount: recipeTypes.length,
-      itemBuilder: (BuildContext context, int index) {
-        return CheckboxListTile(
-          title: Text("${recipeTypes[index]}"),
-          value: values[recipeTypes[index]],
-          onChanged: (bool value) {
-            setState(() {
-              values[recipeTypes[index]] = value;
-              bloc.setSelectedRecipeType(recipeTypes[index], value);
-              //print("changed value of $index to $value");
+    //final List<String> recipeTypes = bloc.getRecipeTypes().keys.toList();
+
+    return StreamBuilder<List<String>>(
+      stream: bloc.recipeTypes,
+      builder: (BuildContext context, AsyncSnapshot<List<String>> snapshot) {
+        print(snapshot.connectionState);
+        if (!snapshot.hasData) {
+          return const Center(
+            child: CircularProgressIndicator(),
+          );
+        }
+
+        return ListView.builder(
+          itemCount: snapshot.data.length,
+          itemBuilder: (BuildContext context, int index) {
+            // fill valuesMap
+            values.putIfAbsent(snapshot.data[index], () {
+              return false;
             });
+            print(values);
+
+            return CheckboxListTile(
+              title: Text(snapshot.data[index]),
+              value: values[snapshot.data[index]],
+              onChanged: (bool value) {
+                setState(() {
+                  values[snapshot.data[index]] = value;
+                  bloc.setSelectedRecipeType(snapshot.data[index], value);
+                  print("changed value of $index to $value");
+                });
+              },
+            );
           },
         );
       },

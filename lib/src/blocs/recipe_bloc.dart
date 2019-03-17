@@ -3,10 +3,27 @@ import "../resources/repository.dart";
 
 class RecipeBloc {
   final Repository repository = Repository();
-  final Map<String, bool> _recipeTypes = <String, bool>{};
+
+  final ReplaySubject<List<String>> _recipeTypes =
+      ReplaySubject<List<String>>();
+
+  final Map<String, bool> _recipeTypesMap = <String, bool>{};
   final Map<String, bool> _ingredients = <String, bool>{};
 
   final PublishSubject<int> _recipeFetcher = PublishSubject<int>();
+
+  // Getter to the streams
+  Observable<List<String>> get recipeTypes => _recipeTypes.stream;
+
+  dynamic fetchRecipeTypes() async {
+    final List<String> recipeTypes = await repository.fetchRecipeTypes();
+    // for (String s in recipeTypes) {
+    //   _recipeTypesMap.putIfAbsent(s, () {
+    //     return false;
+    //   });
+    // }
+    _recipeTypes.add(recipeTypes);
+  }
 
   /// should use streams and return items that way
   // TODO(jw): call load functions from somewhere
@@ -26,25 +43,26 @@ class RecipeBloc {
 
   /// Loads the recipe types from the repository
   void loadRecipeTypes() {
-    if (_recipeTypes.isEmpty) {
+    if (_recipeTypesMap.isEmpty) {
       for (String recipeType in repository.getRecipeTypes()) {
-        _recipeTypes[recipeType] = false;
+        _recipeTypesMap[recipeType] = false;
       }
     }
   }
 
   Function(int) get fetchRecipe => _recipeFetcher.sink.add;
 
+  @Deprecated("to be retired for fetchRecipeTypes()")
   Map<String, bool> getRecipeTypes() {
-    return _recipeTypes;
+    return _recipeTypesMap;
   }
 
   bool isSelectedRecipeType(String recipeType) {
-    return _recipeTypes[recipeType];
+    return _recipeTypesMap[recipeType];
   }
 
   void setSelectedRecipeType(String recipeType, bool value) {
-    _recipeTypes[recipeType] = value;
+    _recipeTypesMap[recipeType] = value;
   }
 
   bool isSelectedIngredient(String ingredient) {
@@ -56,6 +74,7 @@ class RecipeBloc {
   }
 
   void dispose() {
+    _recipeTypes.close();
     _recipeFetcher.close();
   }
 }

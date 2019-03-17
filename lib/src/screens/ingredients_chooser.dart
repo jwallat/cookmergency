@@ -62,17 +62,29 @@ class IngredientsChooserState extends State<IngredientsChooser> {
 
   Widget buildIngredientsList(BuildContext context, RecipeBloc bloc) {
     final List<String> ingredients = bloc.getIngredients().keys.toList();
-    return ListView.builder(
-      itemCount: ingredients.length,
-      itemBuilder: (BuildContext context, int index) {
-        return CheckboxListTile(
-          title: Text("${ingredients[index]}"),
-          value: values[ingredients[index]],
-          onChanged: (bool value) {
-            setState(() {
-              bloc.setSelectedIngredient(ingredients[index], value);
-              values[ingredients[index]] = value;
-            });
+
+    return StreamBuilder<List<String>>(
+      stream: bloc.recipeTypes,
+      builder: (BuildContext context, AsyncSnapshot<List<String>> snapshot) {
+        if (!snapshot.hasData) {
+          return const Center(
+            child: CircularProgressIndicator(),
+          );
+        }
+
+        return ListView.builder(
+          itemCount: ingredients.length,
+          itemBuilder: (BuildContext context, int index) {
+            return CheckboxListTile(
+              title: Text("${ingredients[index]}"),
+              value: values[ingredients[index]],
+              onChanged: (bool value) {
+                setState(() {
+                  bloc.setSelectedIngredient(ingredients[index], value);
+                  values[ingredients[index]] = value;
+                });
+              },
+            );
           },
         );
       },

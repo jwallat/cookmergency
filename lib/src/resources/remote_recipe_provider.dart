@@ -54,14 +54,20 @@ class RemoteRecipeProvider {
 
   Future<List<String>> fetchRecipeTypes() async {
     conn = await MySqlConnection.connect(s);
-    final StreamedResults results =
-        await conn.execute("select recipeTypeName from RecipeTypes");
+    final Results results =
+        await (await conn.execute("select recipeTypeName from RecipeTypes"))
+            .deStream();
     conn.close();
 
-    print(results);
-    // 'if (results.isNotEmpty) {
-    //   print(results);
-    // }'
+    if (results.isNotEmpty) {
+      print("DB responded with $results");
+      final List<String> recipeTypes = List<String>();
+      for (Row r in results) {
+        recipeTypes.add(r[0]);
+      }
+      return recipeTypes;
+    }
+
     return null;
   }
 
