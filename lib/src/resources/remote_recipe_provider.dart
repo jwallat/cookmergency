@@ -3,7 +3,6 @@ import "package:sqljocky5/sqljocky.dart";
 import "../models/recipe_model.dart";
 
 class RemoteRecipeProvider {
-  MySqlConnection conn;
   final ConnectionSettings s = ConnectionSettings(
     user: "cookmergency",
     password: "cookmergency",
@@ -11,6 +10,7 @@ class RemoteRecipeProvider {
     port: 3306,
     db: "cookmergency",
   );
+  MySqlConnection conn;
 
   RemoteRecipeProvider() {
     init();
@@ -34,6 +34,9 @@ class RemoteRecipeProvider {
   }
 
   Future<List<String>> fetchIngredientTypes() async {
+    if (conn == null) {
+      init();
+    }
     final Results results = await (await conn
             .execute("select ingredientTypeName from IngredientTypes"))
         .deStream();
