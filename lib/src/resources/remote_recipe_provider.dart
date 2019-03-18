@@ -33,25 +33,6 @@ class RemoteRecipeProvider {
     return null;
   }
 
-  Future<List<String>> fetchIngredientTypes() async {
-    conn = await MySqlConnection.connect(s);
-    final Results results = await (await conn
-            .execute("select ingredientTypeName from IngredientTypes"))
-        .deStream();
-    conn.close();
-
-    var list = results.toList();
-    var l = list[0];
-    print(l); // row
-    print(l[0]); // string
-
-    // if (results.isNotEmpty) {
-    //   print(results);
-    //   return results.toList() as FutureOr<List<String>>;
-    // }
-    return null;
-  }
-
   Future<List<String>> fetchRecipeTypes() async {
     conn = await MySqlConnection.connect(s);
     final Results results =
@@ -60,20 +41,68 @@ class RemoteRecipeProvider {
     conn.close();
 
     if (results.isNotEmpty) {
-      print("DB responded with $results");
-      final List<String> recipeTypes = List<String>();
+      //print("DB responded with $results");
+      final List<String> recipeTypes = <String>[];
       for (Row r in results) {
         recipeTypes.add(r[0]);
       }
       return recipeTypes;
     }
-
     return null;
   }
 
-  void closeConnection() async {
-    await conn.close();
-    print("connection closed");
+  Future<List<String>> fetchIngredientTypes() async {
+    conn = await MySqlConnection.connect(s);
+    final Results results = await (await conn
+            .execute("select ingredientTypeName from IngredientTypes"))
+        .deStream();
+    conn.close();
+
+    if (results.isNotEmpty) {
+      //print("DB responded with $results");
+      final List<String> ingredientTypes = <String>[];
+      for (Row r in results) {
+        ingredientTypes.add(r[0]);
+      }
+      return ingredientTypes;
+    }
+    return null;
+  }
+
+  Future<List<String>> fetchIngredients() async {
+    conn = await MySqlConnection.connect(s);
+    final Results results =
+        await (await conn.execute("select ingredientName from Ingredients"))
+            .deStream();
+    conn.close();
+
+    if (results.isNotEmpty) {
+      //print("DB responded with $results");
+      final List<String> ingredients = <String>[];
+      for (Row r in results) {
+        ingredients.add(r[0]);
+      }
+      return ingredients;
+    }
+    return null;
+  }
+
+  Future<List<int>> fetchRecipeIds(
+      List<String> chosenRecipeTypes, List<String> chosenIngredients) async {
+    String query = "";
+    conn = await MySqlConnection.connect(s);
+    final Results results = await (await conn.execute(query)).deStream();
+    conn.close();
+
+    if (results.isNotEmpty) {
+      //print("DB responded with $results");
+      final List<int> recipeIds = <int>[];
+      for (Row r in results) {
+        recipeIds.add(r[0]);
+      }
+      return recipeIds;
+    }
+    return null;
   }
 }
 

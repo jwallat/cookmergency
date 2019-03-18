@@ -1,64 +1,66 @@
+import "dart:async";
 import "package:rxdart/rxdart.dart";
+import "../models/recipe_model.dart";
 import "../resources/repository.dart";
 
 class RecipeBloc {
   final Repository repository = Repository();
 
+  final PublishSubject<int> _recipeFetcher = PublishSubject<int>();
+  final BehaviorSubject<Map<int, Future<RecipeModel>>> _recipeOutput =
+      BehaviorSubject<Map<int, Future<RecipeModel>>>();
+
+  final BehaviorSubject<List<int>> _recipeIds = BehaviorSubject<List<int>>();
   final ReplaySubject<List<String>> _recipeTypes =
+      ReplaySubject<List<String>>();
+  final ReplaySubject<List<String>> _ingredientTypes =
+      ReplaySubject<List<String>>();
+  final ReplaySubject<List<String>> _ingredients =
       ReplaySubject<List<String>>();
 
   final Map<String, bool> _recipeTypesMap = <String, bool>{};
-  final Map<String, bool> _ingredients = <String, bool>{};
-
-  final PublishSubject<int> _recipeFetcher = PublishSubject<int>();
+  final Map<String, bool> _ingredientsMap = <String, bool>{};
 
   // Getter to the streams
   Observable<List<String>> get recipeTypes => _recipeTypes.stream;
+  Observable<List<String>> get ingredientTypes => _ingredientTypes.stream;
+  Observable<List<String>> get ingredients => _ingredients.stream;
+
+  // Getter to the sinks
+  Function(int) get fetchRecipe => _recipeFetcher.sink.add;
+
+  dynamic fetchRecipeIds() async {
+    // Filter selected ingredients
+    _ingredientsMap.removeWhere((String ingredient, bool chosen) => !chosen);
+    List<String> chosenIngredients = _ingredientsMap.keys;
+
+    // Filter selected recipeTypes
+    _recipeTypesMap.removeWhere((String recipeType, bool chosen) => !chosen);
+    List<String> chosenRecipeTypes = _recipeTypesMap.keys;
+
+    final List<int> recipeIds =
+        await repository.fetchRecipeIds(chosenRecipeTypes, chosenIngredients);
+
+    _recipeIds.add(recipeIds);
+  }
 
   dynamic fetchRecipeTypes() async {
     final List<String> recipeTypes = await repository.fetchRecipeTypes();
-    // for (String s in recipeTypes) {
-    //   _recipeTypesMap.putIfAbsent(s, () {
-    //     return false;
-    //   });
-    // }
+
     _recipeTypes.add(recipeTypes);
   }
 
-  /// should use streams and return items that way
-  // TODO(jw): call load functions from somewhere
-  void loadIngredients() {
-    if (_ingredients.isEmpty) {
-      for (String ingredient in repository.fetchIngredients()) {
-        _ingredients[ingredient] = false;
-      }
-    }
+  dynamic fetchIngredientTypes() async {
+    final List<String> ingredientTypes =
+        await repository.fetchIngredientTypes();
+
+    _ingredientTypes.add(ingredientTypes);
   }
 
-  void fetchIngredientTypes() {}
+  dynamic fetchIngredients() async {
+    final List<String> ingredients = await repository.fetchIngredients();
 
-  Map<String, bool> getIngredients() {
-    return _ingredients;
-  }
-
-  /// Loads the recipe types from the repository
-  void loadRecipeTypes() {
-    if (_recipeTypesMap.isEmpty) {
-      for (String recipeType in repository.getRecipeTypes()) {
-        _recipeTypesMap[recipeType] = false;
-      }
-    }
-  }
-
-  Function(int) get fetchRecipe => _recipeFetcher.sink.add;
-
-  @Deprecated("to be retired for fetchRecipeTypes()")
-  Map<String, bool> getRecipeTypes() {
-    return _recipeTypesMap;
-  }
-
-  bool isSelectedRecipeType(String recipeType) {
-    return _recipeTypesMap[recipeType];
+    _ingredients.add(ingredients);
   }
 
   void setSelectedRecipeType(String recipeType, bool value) {
@@ -66,15 +68,22 @@ class RecipeBloc {
   }
 
   bool isSelectedIngredient(String ingredient) {
-    return _ingredients[ingredient];
+    return _ingredientsMap[ingredient];
+  }
+
+  Map<String, bool> getIngredientsMap() {
+    return _ingredientsMap;
   }
 
   void setSelectedIngredient(String ingredient, bool value) {
-    _ingredients[ingredient] = value;
+    _ingredientsMap[ingredient] = value;
+    print("[map] changed $ingredient to $value");
   }
 
   void dispose() {
     _recipeTypes.close();
+    _ingredientTypes.close();
+    _ingredients.close();
     _recipeFetcher.close();
   }
 }

@@ -5,23 +5,21 @@ import "../resources/remote_recipe_provider.dart";
 class Repository {
   /// Handle item fetching and saving
 
-  /// should be returning future from db
-  List<String> fetchIngredients() {
-    fetchIngredientTypes();
-    return <String>["Eier", "Mehl", "Milch", "Nutella"];
+  Future<List<String>> fetchIngredients() {
+    return remoteRecipeProvider.fetchIngredients();
   }
 
   Future<List<String>> fetchIngredientTypes() {
-    /// achtung!!!!!
-    return null; //remoteRecipeProvider.fetchRecipeTypes();
-  }
-
-  /// should be returning future from local/remote db
-  List<String> getRecipeTypes() {
-    return <String>["Frühstück", "Nudelgerichte", "Fisch", "Desserts"];
+    return remoteRecipeProvider.fetchIngredientTypes();
   }
 
   Future<List<String>> fetchRecipeTypes() async {
     return remoteRecipeProvider.fetchRecipeTypes();
+  }
+
+  Future<List<int>> fetchRecipeIds(
+      List<String> chosenRecipeTypes, List<String> chosenIngredients) async {
+    return remoteRecipeProvider.fetchRecipeIds(
+        chosenRecipeTypes, chosenIngredients);
   }
 }

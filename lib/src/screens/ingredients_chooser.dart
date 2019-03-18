@@ -13,8 +13,10 @@ class IngredientsChooserState extends State<IngredientsChooser> {
   Widget build(BuildContext context) {
     final RecipeBloc bloc = RecipeProvider.of(context);
 
-    if (values.isEmpty) {
-      values.addAll(bloc.getIngredients());
+    if (bloc.getIngredientsMap().isNotEmpty) {
+      setState(() {
+        values = bloc.getIngredientsMap();
+      });
     }
 
     return Scaffold(
@@ -61,10 +63,8 @@ class IngredientsChooserState extends State<IngredientsChooser> {
   }
 
   Widget buildIngredientsList(BuildContext context, RecipeBloc bloc) {
-    final List<String> ingredients = bloc.getIngredients().keys.toList();
-
     return StreamBuilder<List<String>>(
-      stream: bloc.recipeTypes,
+      stream: bloc.ingredients,
       builder: (BuildContext context, AsyncSnapshot<List<String>> snapshot) {
         if (!snapshot.hasData) {
           return const Center(
@@ -73,15 +73,21 @@ class IngredientsChooserState extends State<IngredientsChooser> {
         }
 
         return ListView.builder(
-          itemCount: ingredients.length,
+          itemCount: snapshot.data.length,
           itemBuilder: (BuildContext context, int index) {
+            // fill valuesMap
+            values.putIfAbsent(snapshot.data[index], () {
+              return false;
+            });
+
             return CheckboxListTile(
-              title: Text("${ingredients[index]}"),
-              value: values[ingredients[index]],
+              title: Text(snapshot.data[index]),
+              value: values[snapshot.data[index]],
               onChanged: (bool value) {
                 setState(() {
-                  bloc.setSelectedIngredient(ingredients[index], value);
-                  values[ingredients[index]] = value;
+                  bloc.setSelectedIngredient(snapshot.data[index], value);
+                  values[snapshot.data[index]] = value;
+                  print("changed value of $index to $value");
                 });
               },
             );

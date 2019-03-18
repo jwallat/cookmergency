@@ -23,15 +23,18 @@ class App extends StatelessWidget {
           // load data
           final RecipeBloc bloc = RecipeProvider.of(context);
           print("load data");
-          //bloc.loadRecipeTypes();
           bloc.fetchRecipeTypes();
-          //bloc.loadIngredients();
           return RecipeTypeChooser();
         },
       );
     } else if (settings.name == "/ingredientsChooser") {
       return MaterialPageRoute<dynamic>(
         builder: (BuildContext context) {
+          // load data
+          final RecipeBloc bloc = RecipeProvider.of(context);
+          print("load ingredients");
+          bloc.fetchIngredientTypes();
+          bloc.fetchIngredients();
           return IngredientsChooser();
         },
       );

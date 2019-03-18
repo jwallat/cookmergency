@@ -13,10 +13,6 @@ class RecipeTypeChooserState extends State<RecipeTypeChooser> {
   Widget build(BuildContext context) {
     final RecipeBloc bloc = RecipeProvider.of(context);
 
-    // if (values.isEmpty) {
-    //   values.addAll(bloc.getRecipeTypes());
-    // }
-
     return Scaffold(
       appBar: AppBar(
         title: const Text('Cookmergency :)'),
@@ -61,12 +57,9 @@ class RecipeTypeChooserState extends State<RecipeTypeChooser> {
   }
 
   Widget buildRecipeTypeList(BuildContext context, RecipeBloc bloc) {
-    //final List<String> recipeTypes = bloc.getRecipeTypes().keys.toList();
-
     return StreamBuilder<List<String>>(
       stream: bloc.recipeTypes,
       builder: (BuildContext context, AsyncSnapshot<List<String>> snapshot) {
-        print(snapshot.connectionState);
         if (!snapshot.hasData) {
           return const Center(
             child: CircularProgressIndicator(),
@@ -80,7 +73,6 @@ class RecipeTypeChooserState extends State<RecipeTypeChooser> {
             values.putIfAbsent(snapshot.data[index], () {
               return false;
             });
-            print(values);
 
             return CheckboxListTile(
               title: Text(snapshot.data[index]),
