@@ -42,7 +42,8 @@ class App extends StatelessWidget {
       return MaterialPageRoute<dynamic>(
         builder: (BuildContext context) {
           // load recipes for bloc
-          //final RecipeBloc bloc = RecipeProvider.of(context);
+          final RecipeBloc bloc = RecipeProvider.of(context);
+          bloc.fetchRecipeIds();
 
           return RecipesList();
         },

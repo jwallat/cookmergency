@@ -89,13 +89,34 @@ class RemoteRecipeProvider {
 
   Future<List<int>> fetchRecipeIds(
       List<String> chosenRecipeTypes, List<String> chosenIngredients) async {
-    String query = "";
+    String recipeTypes = "";
+    for (String recipeType in chosenRecipeTypes) {
+      recipeTypes += "'$recipeType',";
+    }
+
+    String ingredients = "";
+    for (String ingredient in chosenIngredients) {
+      ingredients += "'$ingredient',";
+    }
+    if (recipeTypes.isNotEmpty && ingredients.isNotEmpty) {
+      recipeTypes = recipeTypes.substring(0, recipeTypes.length - 1) ?? "";
+      ingredients = ingredients.substring(0, ingredients.length - 1) ?? "";
+    }
+
+    String query = "SELECT DISTINCT r.id FROM IngredientAmounts ia " +
+        "JOIN Recipes r ON (ia.recipeTitle = r.recipeTitle) WHERE r.recipeTypeName IN ($recipeTypes) AND ia.recipeTitle NOT IN " +
+        "(" +
+        "SELECT ib.recipeTitle " +
+        "FROM IngredientAmounts ib " +
+        "WHERE ib.ingredientName NOT IN ($ingredients)" +
+        ")";
+    print(query);
     conn = await MySqlConnection.connect(s);
     final Results results = await (await conn.execute(query)).deStream();
     conn.close();
 
     if (results.isNotEmpty) {
-      //print("DB responded with $results");
+      print("DB responded with $results");
       final List<int> recipeIds = <int>[];
       for (Row r in results) {
         recipeIds.add(r[0]);

@@ -22,6 +22,7 @@ class RecipeBloc {
   final Map<String, bool> _ingredientsMap = <String, bool>{};
 
   // Getter to the streams
+  Observable<List<int>> get recipeIds => _recipeIds.stream;
   Observable<List<String>> get recipeTypes => _recipeTypes.stream;
   Observable<List<String>> get ingredientTypes => _ingredientTypes.stream;
   Observable<List<String>> get ingredients => _ingredients.stream;
@@ -32,11 +33,11 @@ class RecipeBloc {
   dynamic fetchRecipeIds() async {
     // Filter selected ingredients
     _ingredientsMap.removeWhere((String ingredient, bool chosen) => !chosen);
-    List<String> chosenIngredients = _ingredientsMap.keys;
+    List<String> chosenIngredients = _ingredientsMap.keys.toList();
 
     // Filter selected recipeTypes
     _recipeTypesMap.removeWhere((String recipeType, bool chosen) => !chosen);
-    List<String> chosenRecipeTypes = _recipeTypesMap.keys;
+    List<String> chosenRecipeTypes = _recipeTypesMap.keys.toList();
 
     final List<int> recipeIds =
         await repository.fetchRecipeIds(chosenRecipeTypes, chosenIngredients);

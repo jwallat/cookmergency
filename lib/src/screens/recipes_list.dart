@@ -19,14 +19,25 @@ class RecipesList extends StatelessWidget {
   }
 
   Widget buildRecipeList(BuildContext context, RecipeBloc bloc) {
-    return StreamBuilder(
-        stream: bloc.fetchRecipeIds(),
-        builder: (BuildContext context, AsyncSnapshot<List<String>> snapshot) {
-          if (!snapshot.hasData) {
-            return const Center(
-              child: CircularProgressIndicator(),
+    return //Text("Ok");
+        StreamBuilder<List<int>>(
+      stream: bloc.recipeIds,
+      builder: (BuildContext context, AsyncSnapshot<List<int>> snapshot) {
+        if (!snapshot.hasData) {
+          return const Center(
+            child: CircularProgressIndicator(),
+          );
+        }
+
+        return ListView.builder(
+          itemCount: snapshot.data.length,
+          itemBuilder: (BuildContext context, int index) {
+            return ListTile(
+              title: Text("${snapshot.data[index]}"),
             );
-          }
-        });
+          },
+        );
+      },
+    );
   }
 }
