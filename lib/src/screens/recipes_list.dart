@@ -1,5 +1,7 @@
 import "package:flutter/material.dart";
 import "../blocs/recipe_provider.dart";
+import "../widgets/recipe_list_tile.dart";
+import "../widgets/refresh.dart";
 
 class RecipesList extends StatelessWidget {
   @override
@@ -29,13 +31,17 @@ class RecipesList extends StatelessWidget {
           );
         }
 
-        return ListView.builder(
-          itemCount: snapshot.data.length,
-          itemBuilder: (BuildContext context, int index) {
-            return ListTile(
-              title: Text("${snapshot.data[index]}"),
-            );
-          },
+        return Refresh(
+          child: ListView.builder(
+            itemCount: snapshot.data.length,
+            itemBuilder: (BuildContext context, int index) {
+              bloc.fetchRecipe(snapshot.data[index]);
+
+              return RecipeListTile(
+                recipeId: snapshot.data[index],
+              );
+            },
+          ),
         );
       },
     );

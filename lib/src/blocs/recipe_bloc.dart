@@ -21,8 +21,15 @@ class RecipeBloc {
   final Map<String, bool> _recipeTypesMap = <String, bool>{};
   final Map<String, bool> _ingredientsMap = <String, bool>{};
 
+  RecipeBloc() {
+    _recipeFetcher.stream
+        .transform<Map<int, Future<RecipeModel>>>(_recipeTransformer())
+        .pipe(_recipeOutput);
+  }
+
   // Getter to the streams
   Observable<List<int>> get recipeIds => _recipeIds.stream;
+  Observable<Map<int, Future<RecipeModel>>> get recipes => _recipeOutput.stream;
   Observable<List<String>> get recipeTypes => _recipeTypes.stream;
   Observable<List<String>> get ingredientTypes => _ingredientTypes.stream;
   Observable<List<String>> get ingredients => _ingredients.stream;
@@ -30,14 +37,24 @@ class RecipeBloc {
   // Getter to the sinks
   Function(int) get fetchRecipe => _recipeFetcher.sink.add;
 
+  dynamic _recipeTransformer() {
+    return ScanStreamTransformer(
+      (Map<int, Future<RecipeModel>> cache, int id, int index) {
+        cache[id] = repository.fetchRecipe(id);
+        return cache;
+      },
+      <int, Future<RecipeModel>>{},
+    );
+  }
+
   dynamic fetchRecipeIds() async {
     // Filter selected ingredients
     _ingredientsMap.removeWhere((String ingredient, bool chosen) => !chosen);
-    List<String> chosenIngredients = _ingredientsMap.keys.toList();
+    final List<String> chosenIngredients = _ingredientsMap.keys.toList();
 
     // Filter selected recipeTypes
     _recipeTypesMap.removeWhere((String recipeType, bool chosen) => !chosen);
-    List<String> chosenRecipeTypes = _recipeTypesMap.keys.toList();
+    final List<String> chosenRecipeTypes = _recipeTypesMap.keys.toList();
 
     final List<int> recipeIds =
         await repository.fetchRecipeIds(chosenRecipeTypes, chosenIngredients);
@@ -78,7 +95,6 @@ class RecipeBloc {
 
   void setSelectedIngredient(String ingredient, bool value) {
     _ingredientsMap[ingredient] = value;
-    print("[map] changed $ingredient to $value");
   }
 
   void dispose() {
@@ -86,5 +102,6 @@ class RecipeBloc {
     _ingredientTypes.close();
     _ingredients.close();
     _recipeFetcher.close();
+    _recipeOutput.close();
   }
 }

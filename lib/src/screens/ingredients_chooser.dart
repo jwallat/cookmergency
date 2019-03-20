@@ -87,7 +87,6 @@ class IngredientsChooserState extends State<IngredientsChooser> {
                 setState(() {
                   bloc.setSelectedIngredient(snapshot.data[index], value);
                   values[snapshot.data[index]] = value;
-                  print("changed value of $index to $value");
                 });
               },
             );

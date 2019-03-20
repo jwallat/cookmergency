@@ -22,7 +22,6 @@ class App extends StatelessWidget {
         builder: (BuildContext context) {
           // load data
           final RecipeBloc bloc = RecipeProvider.of(context);
-          print("load data");
           bloc.fetchRecipeTypes();
           return RecipeTypeChooser();
         },
@@ -32,7 +31,6 @@ class App extends StatelessWidget {
         builder: (BuildContext context) {
           // load data
           final RecipeBloc bloc = RecipeProvider.of(context);
-          print("load ingredients");
           bloc.fetchIngredientTypes();
           bloc.fetchIngredients();
           return IngredientsChooser();

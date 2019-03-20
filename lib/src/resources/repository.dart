@@ -22,4 +22,8 @@ class Repository {
     return remoteRecipeProvider.fetchRecipeIds(
         chosenRecipeTypes, chosenIngredients);
   }
+
+  Future<RecipeModel> fetchRecipe(int id) {
+    return remoteRecipeProvider.fetchRecipe(id);
+  }
 }

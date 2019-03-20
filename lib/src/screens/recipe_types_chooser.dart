@@ -81,7 +81,6 @@ class RecipeTypeChooserState extends State<RecipeTypeChooser> {
                 setState(() {
                   values[snapshot.data[index]] = value;
                   bloc.setSelectedRecipeType(snapshot.data[index], value);
-                  print("changed value of $index to $value");
                 });
               },
             );

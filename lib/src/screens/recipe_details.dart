@@ -1,5 +1,7 @@
+import "dart:async";
 import "package:flutter/material.dart";
 import "../blocs/recipe_provider.dart";
+import "../models/recipe_model.dart";
 
 class RecipeDetails extends StatelessWidget {
   final int recipeId;
@@ -20,20 +22,33 @@ class RecipeDetails extends StatelessWidget {
 
   Widget buildDetails(RecipeBloc bloc) {
     // retrieve right RecipeModel from bloc with recipeId
-    return Container(
-      margin: const EdgeInsets.all(8.0),
-      child: Stack(
-        children: const <Widget>[
-          Text(
-            "Title",
-            style: TextStyle(fontSize: 14),
-          ),
-          Divider(),
-          Text("Zutaten"),
-          Divider(),
-          Text("Anleitung"),
-        ],
-      ),
+
+    return StreamBuilder<Map<int, Future<RecipeModel>>>(
+      stream: bloc.recipes,
+      builder: (BuildContext context,
+          AsyncSnapshot<Map<int, Future<RecipeModel>>> snapshot) {
+        if (!snapshot.hasData) {
+          return const Text("Loading");
+        }
+
+        final Future<RecipeModel> recipeFuture = snapshot.data[recipeId];
+
+        return FutureBuilder<RecipeModel>(
+          future: recipeFuture,
+          builder: (BuildContext context,
+              AsyncSnapshot<RecipeModel> recipeSnapshot) {
+            if (!recipeSnapshot.hasData) {
+              return const Text("Item still loading");
+            }
+
+            return buildRecipeDetails(recipeSnapshot.data);
+          },
+        );
+      },
     );
+  }
+
+  Widget buildRecipeDetails(RecipeModel recipe) {
+    return Text(recipe.preparationText);
   }
 }
