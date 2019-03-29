@@ -49,6 +49,28 @@ class RecipeDetails extends StatelessWidget {
   }
 
   Widget buildRecipeDetails(RecipeModel recipe) {
-    return Text(recipe.preparationText);
+    return Container(
+      margin: const EdgeInsets.all(8.0),
+      child: Column(
+        children: <Widget>[
+          Text(
+            recipe.title,
+            style: const TextStyle(
+              fontSize: 20,
+            ),
+          ),
+          Divider(),
+          const Text(
+            "Zutaten",
+            style: TextStyle(
+              fontSize: 15,
+            ),
+          ),
+          Text(recipe.ingredients.toString()),
+          Divider(),
+          Text(recipe.preparationText)
+        ],
+      ),
+    );
   }
 }
