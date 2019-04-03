@@ -104,7 +104,7 @@ linter:
 
     # - avoid_annotating_with_dynamic # conflicts with always_specify_types
 
-    - avoid_as
+    # - avoid_as
 
     # - avoid_bool_literals_in_conditional_expressions # not yet tested
 

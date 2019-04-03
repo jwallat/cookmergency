@@ -13,6 +13,13 @@ class RecipesList extends StatelessWidget {
         title: const Text("Cookmergency :)"),
       ),
       body: buildBody(context, bloc),
+      floatingActionButton: FloatingActionButton(
+        onPressed: () {
+          print("clicked");
+          Navigator.pushNamed(context, "/filter");
+        },
+        child: const Icon(Icons.details),
+      ),
     );
   }
 

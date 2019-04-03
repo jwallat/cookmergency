@@ -1,6 +1,7 @@
 import "package:flutter/material.dart";
 import "blocs/recipe_provider.dart";
 import "screens/ingredients_chooser.dart";
+import "screens/filter_dialog.dart";
 import "screens/recipe_details.dart";
 import "screens/recipe_types_chooser.dart";
 import "screens/recipes_list.dart";
@@ -23,17 +24,11 @@ class App extends StatelessWidget {
           // load data
           final RecipeBloc bloc = RecipeProvider.of(context);
           bloc.fetchRecipeTypes();
-          return RecipeTypeChooser();
-        },
-      );
-    } else if (settings.name == "/ingredientsChooser") {
-      return MaterialPageRoute<dynamic>(
-        builder: (BuildContext context) {
-          // load data
-          final RecipeBloc bloc = RecipeProvider.of(context);
           bloc.fetchIngredientTypes();
           bloc.fetchIngredients();
-          return IngredientsChooser();
+          bloc.fetchRecipeIds();
+
+          return RecipesList();
         },
       );
     } else if (settings.name == "/recipesList") {
@@ -44,6 +39,12 @@ class App extends StatelessWidget {
           bloc.fetchRecipeIds();
 
           return RecipesList();
+        },
+      );
+    } else if (settings.name == "/filter") {
+      return MaterialPageRoute<dynamic>(
+        builder: (BuildContext context) {
+          return FilterDialog();
         },
       );
     } else {

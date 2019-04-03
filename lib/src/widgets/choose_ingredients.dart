@@ -1,33 +1,25 @@
 import "package:flutter/material.dart";
 import "../blocs/recipe_provider.dart";
+import "../screens/filter_dialog.dart";
 
-class IngredientsChooser extends StatefulWidget {
-  @override
-  IngredientsChooserState createState() => IngredientsChooserState();
-}
-
-class IngredientsChooserState extends State<IngredientsChooser> {
+class ChooseIngredients extends StatelessWidget {
+  FilterDialogState parentState;
   Map<String, bool> ingredientChooserValues = <String, bool>{};
+
+  ChooseIngredients({this.ingredientChooserValues, this.parentState});
 
   @override
   Widget build(BuildContext context) {
     final RecipeBloc bloc = RecipeProvider.of(context);
 
+    parentState =
+        context.ancestorInheritedElementForWidgetOfExactType(FilterDialogState)
+            as FilterDialogState;
+
     if (bloc.getIngredientsMap().isNotEmpty) {
-      setState(() {
-        ingredientChooserValues = bloc.getIngredientsMap();
-      });
+      parentState.initIngredientChooserValues();
     }
 
-    return Scaffold(
-      appBar: AppBar(
-        title: const Text("Cookmergency :)"),
-      ),
-      body: buildBody(context, bloc),
-    );
-  }
-
-  Widget buildBody(BuildContext context, RecipeBloc bloc) {
     return Container(
       child: Column(
         children: <Widget>[
@@ -43,18 +35,6 @@ class IngredientsChooserState extends State<IngredientsChooser> {
           ),
           Flexible(
             child: buildIngredientsList(context, bloc),
-          ),
-          const Divider(
-            color: Colors.grey,
-            height: 16.0,
-          ),
-          Center(
-            child: RaisedButton(
-              child: const Text("Show matching recipes!"),
-              onPressed: () {
-                Navigator.pushNamed(context, "/recipesList");
-              },
-            ),
           ),
         ],
       ),
@@ -76,18 +56,13 @@ class IngredientsChooserState extends State<IngredientsChooser> {
           itemCount: snapshot.data.length,
           itemBuilder: (BuildContext context, int index) {
             // fill valuesMap
-            ingredientChooserValues.putIfAbsent(snapshot.data[index], () {
-              return false;
-            });
-
+            parentState.addIfAbsentIngredient(snapshot.data[index]);
             return CheckboxListTile(
               title: Text(snapshot.data[index]),
-              value: ingredientChooserValues[snapshot.data[index]],
+              value: parentState.getValueIngredient(snapshot.data[index]),
               onChanged: (bool value) {
-                setState(() {
-                  bloc.setSelectedIngredient(snapshot.data[index], value);
-                  ingredientChooserValues[snapshot.data[index]] = value;
-                });
+                parentState.changeIngredientChooserValues(
+                    index, value, snapshot.data[index]);
               },
             );
           },
