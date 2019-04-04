@@ -49,7 +49,7 @@ class RecipeListTile extends StatelessWidget {
           ),
           onTap: () => Navigator.pushNamed(context, "/${recipe.id}"),
         ),
-        Divider(),
+        const Divider(),
       ],
     );
   }

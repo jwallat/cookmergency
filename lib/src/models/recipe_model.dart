@@ -8,7 +8,7 @@ class RecipeModel {
   String preparationText;
   int preparationTimeInMinutes;
   String imgUrl;
-  List<IngredientAmountModel> ingredients = [];
+  List<IngredientAmountModel> ingredients = <IngredientAmountModel>[];
 
   RecipeModel.fromDb(Results recipeResult) {
     for (Row row in recipeResult) {

@@ -59,7 +59,7 @@ class RecipeDetails extends StatelessWidget {
               fontSize: 20,
             ),
           ),
-          Divider(),
+          const Divider(),
           const Text(
             "Zutaten",
             style: TextStyle(
@@ -67,7 +67,7 @@ class RecipeDetails extends StatelessWidget {
             ),
           ),
           Text(recipe.ingredients.toString()),
-          Divider(),
+          const Divider(),
           Text(recipe.preparationText)
         ],
       ),

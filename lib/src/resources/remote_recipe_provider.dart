@@ -1,6 +1,5 @@
 import "dart:async";
 import "package:sqljocky5/sqljocky.dart";
-import "../models/ingredient_model.dart";
 import "../models/recipe_model.dart";
 
 class RemoteRecipeProvider {
@@ -116,7 +115,7 @@ class RemoteRecipeProvider {
           "("
           "SELECT ib.recipeTitle "
           "FROM IngredientAmounts ib "
-          "WHERE ib.ingredientName NOT IN ($ingredients)" +
+          "WHERE ib.ingredientName NOT IN ($ingredients)"
           ")";
     }
     //print(query);

@@ -9,7 +9,7 @@ class LoadingContainer extends StatelessWidget {
           title: buildContainer(),
           subtitle: buildContainer(),
         ),
-        Divider(),
+        const Divider(),
       ],
     );
   }
