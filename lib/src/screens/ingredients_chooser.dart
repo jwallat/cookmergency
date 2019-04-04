@@ -13,7 +13,7 @@ class IngredientsChooser extends StatelessWidget {
         children: <Widget>[
           const Center(
             child: Text(
-              "Select the ingredients that you have :)",
+              "What ingredients do you have?",
               textScaleFactor: 1.5,
             ),
           ),

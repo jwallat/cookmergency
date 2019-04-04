@@ -13,7 +13,7 @@ class RecipeTypesChooser extends StatelessWidget {
         children: <Widget>[
           const Center(
             child: Text(
-              "Select the recipe types you want to search for :)",
+              "What do you want to cook?",
               textScaleFactor: 1.5,
             ),
           ),
