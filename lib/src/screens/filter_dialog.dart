@@ -98,7 +98,6 @@ class FilterDialogState extends State<FilterDialog> {
   void changeRecipeTypeSelectedValues(int index, bool value, String data) {
     setState(() {
       recipeTypeSelectedValues[data] = value;
-      print("in set State");
       bloc.setSelectedRecipeType(data, value);
     });
   }

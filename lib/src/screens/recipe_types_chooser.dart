@@ -51,7 +51,6 @@ class RecipeTypesChooser extends StatelessWidget {
               title: Text(snapshot.data[index]),
               value: state.getValueRecipeType(snapshot.data[index]),
               onChanged: (bool value) {
-                print("changed recipe type ${snapshot.data[index]}");
                 state.changeRecipeTypeSelectedValues(
                     index, value, snapshot.data[index]);
               },
