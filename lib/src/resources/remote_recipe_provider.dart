@@ -1,5 +1,6 @@
 import "dart:async";
 import "package:sqljocky5/sqljocky.dart";
+import "../models/ingredient_model.dart";
 import "../models/recipe_model.dart";
 
 class RemoteRecipeProvider {
@@ -16,15 +17,17 @@ class RemoteRecipeProvider {
 
   Future<RecipeModel> fetchRecipe(int id) async {
     conn = await MySqlConnection.connect(s);
-    final Results results =
-        await (await conn.execute("select * from Recipes where id='$id'"))
-            .deStream();
+    final Results results = await (await conn.execute(
+            "SELECT * FROM IngredientAmounts ia JOIN Recipes r ON (ia.recipeTitle = r.recipeTitle) WHERE r.id='$id'"))
+        .deStream();
     conn.close();
 
     if (results.isNotEmpty) {
-      //print("DB responded with: $results");
+      //print("DB responded with $results");
+
       return RecipeModel.fromDb(results);
     }
+
     return null;
   }
 
@@ -116,7 +119,7 @@ class RemoteRecipeProvider {
           "WHERE ib.ingredientName NOT IN ($ingredients)" +
           ")";
     }
-    print(query);
+    //print(query);
     conn = await MySqlConnection.connect(s);
     final Results results = await (await conn.execute(query)).deStream();
     conn.close();

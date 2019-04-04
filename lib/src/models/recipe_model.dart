@@ -1,4 +1,5 @@
 import "package:sqljocky5/sqljocky.dart";
+import "ingredient_model.dart";
 
 class RecipeModel {
   int id;
@@ -7,15 +8,17 @@ class RecipeModel {
   String preparationText;
   int preparationTimeInMinutes;
   String imgUrl;
-  List<String> ingredients;
+  List<IngredientAmountModel> ingredients = [];
 
   RecipeModel.fromDb(Results recipeResult) {
     for (Row row in recipeResult) {
-      id = row[0];
-      type = row[1];
-      title = row[2];
-      preparationText = row[3].toString();
-      imgUrl = row[4];
+      ingredients.add(IngredientAmountModel.fromRow(row));
+      id = row[5];
+      type = row[6];
+      title = row[7];
+      preparationText = row[8].toString();
+      imgUrl = row[9];
     }
+    ingredients = ingredients;
   }
 }
