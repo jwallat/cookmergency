@@ -12,15 +12,7 @@ class RemoteRecipeProvider {
   );
   MySqlConnection conn;
 
-  RemoteRecipeProvider() {
-    //init();
-  }
-
-  // void init() async {
-  //   print("opening connection");
-  //   conn = await MySqlConnection.connect(s);
-  //   print("connection open");
-  // }
+  RemoteRecipeProvider();
 
   Future<RecipeModel> fetchRecipe(int id) async {
     conn = await MySqlConnection.connect(s);
@@ -30,7 +22,7 @@ class RemoteRecipeProvider {
     conn.close();
 
     if (results.isNotEmpty) {
-      print("DB responded with: $results");
+      //print("DB responded with: $results");
       return RecipeModel.fromDb(results);
     }
     return null;
@@ -106,22 +98,31 @@ class RemoteRecipeProvider {
       ingredients = ingredients.substring(0, ingredients.length - 1) ?? "";
     }
 
-    if (ingredients.isEmpty) {}
-    if (recipeTypes.isEmpty) {}
-    final String query = "SELECT DISTINCT r.id FROM IngredientAmounts ia " +
-        "JOIN Recipes r ON (ia.recipeTitle = r.recipeTitle) WHERE r.recipeTypeName IN ($recipeTypes) AND ia.recipeTitle NOT IN " +
-        "(" +
-        "SELECT ib.recipeTitle " +
-        "FROM IngredientAmounts ib " +
-        "WHERE ib.ingredientName NOT IN ($ingredients)" +
-        ")";
+    String query;
+    if (ingredients.isEmpty && recipeTypes.isEmpty) {
+      //TODO: Entscheiden wann alle und wann nur manche gezeigt werden sollen
+      query = "SELECT DISTINCT r.id FROM Recipes r";
+    } else if (recipeTypes.isEmpty && ingredients.isNotEmpty) {
+      query = "SELECT DISTINCT r.id FROM Recipes r";
+    } else if (recipeTypes.isNotEmpty && ingredients.isEmpty) {
+      query = "SELECT DISTINCT r.id FROM Recipes r";
+    } else {
+      query = "SELECT DISTINCT r.id FROM IngredientAmounts ia "
+          "JOIN Recipes r ON (ia.recipeTitle = r.recipeTitle) WHERE r.recipeTypeName IN ($recipeTypes)"
+          "AND ia.recipeTitle NOT IN "
+          "("
+          "SELECT ib.recipeTitle "
+          "FROM IngredientAmounts ib "
+          "WHERE ib.ingredientName NOT IN ($ingredients)" +
+          ")";
+    }
     print(query);
     conn = await MySqlConnection.connect(s);
     final Results results = await (await conn.execute(query)).deStream();
     conn.close();
 
     if (results.isNotEmpty) {
-      print("DB responded with $results");
+      //print("DB responded with $results");
       final List<int> recipeIds = <int>[];
       for (Row r in results) {
         recipeIds.add(r[0]);

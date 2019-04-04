@@ -93,6 +93,10 @@ class RecipeBloc {
     return _ingredientsMap;
   }
 
+  Map<String, bool> getRecipeTypesMap() {
+    return _recipeTypesMap;
+  }
+
   void setSelectedIngredient(String ingredient, bool value) {
     _ingredientsMap[ingredient] = value;
   }

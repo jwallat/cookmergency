@@ -1,33 +1,13 @@
 import "package:flutter/material.dart";
 import "../blocs/recipe_provider.dart";
+import "../screens/filter_dialog.dart";
 
-class IngredientsChooser extends StatefulWidget {
-  @override
-  IngredientsChooserState createState() => IngredientsChooserState();
-}
-
-class IngredientsChooserState extends State<IngredientsChooser> {
-  Map<String, bool> ingredientChooserValues = <String, bool>{};
-
+class IngredientsChooser extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final RecipeBloc bloc = RecipeProvider.of(context);
+    final FilterDialogState state = FilterDialog.of(context);
 
-    if (bloc.getIngredientsMap().isNotEmpty) {
-      setState(() {
-        ingredientChooserValues = bloc.getIngredientsMap();
-      });
-    }
-
-    return Scaffold(
-      appBar: AppBar(
-        title: const Text("Cookmergency :)"),
-      ),
-      body: buildBody(context, bloc),
-    );
-  }
-
-  Widget buildBody(BuildContext context, RecipeBloc bloc) {
     return Container(
       child: Column(
         children: <Widget>[
@@ -42,19 +22,7 @@ class IngredientsChooserState extends State<IngredientsChooser> {
             height: 16.0,
           ),
           Flexible(
-            child: buildIngredientsList(context, bloc),
-          ),
-          const Divider(
-            color: Colors.grey,
-            height: 16.0,
-          ),
-          Center(
-            child: RaisedButton(
-              child: const Text("Show matching recipes!"),
-              onPressed: () {
-                Navigator.pushNamed(context, "/recipesList");
-              },
-            ),
+            child: buildIngredientsList(context, bloc, state),
           ),
         ],
       ),
@@ -62,7 +30,8 @@ class IngredientsChooserState extends State<IngredientsChooser> {
     );
   }
 
-  Widget buildIngredientsList(BuildContext context, RecipeBloc bloc) {
+  Widget buildIngredientsList(
+      BuildContext context, RecipeBloc bloc, FilterDialogState state) {
     return StreamBuilder<List<String>>(
       stream: bloc.ingredients,
       builder: (BuildContext context, AsyncSnapshot<List<String>> snapshot) {
@@ -76,18 +45,13 @@ class IngredientsChooserState extends State<IngredientsChooser> {
           itemCount: snapshot.data.length,
           itemBuilder: (BuildContext context, int index) {
             // fill valuesMap
-            ingredientChooserValues.putIfAbsent(snapshot.data[index], () {
-              return false;
-            });
-
+            state.addIfAbsentIngredient(snapshot.data[index]);
             return CheckboxListTile(
               title: Text(snapshot.data[index]),
-              value: ingredientChooserValues[snapshot.data[index]],
+              value: state.getValueIngredient(snapshot.data[index]),
               onChanged: (bool value) {
-                setState(() {
-                  bloc.setSelectedIngredient(snapshot.data[index], value);
-                  ingredientChooserValues[snapshot.data[index]] = value;
-                });
+                state.changeIngredientChooserValues(
+                    index, value, snapshot.data[index]);
               },
             );
           },

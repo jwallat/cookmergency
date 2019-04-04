@@ -1,27 +1,13 @@
 import "package:flutter/material.dart";
 import "../blocs/recipe_provider.dart";
+import "../screens/filter_dialog.dart";
 
-class RecipeTypeChooser extends StatefulWidget {
-  @override
-  RecipeTypeChooserState createState() => RecipeTypeChooserState();
-}
-
-class RecipeTypeChooserState extends State<RecipeTypeChooser> {
-  Map<String, bool> recipeTypeSelectedValues = <String, bool>{};
-
+class RecipeTypesChooser extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final RecipeBloc bloc = RecipeProvider.of(context);
+    final FilterDialogState state = FilterDialog.of(context);
 
-    return Scaffold(
-      appBar: AppBar(
-        title: const Text('Cookmergency :)'),
-      ),
-      body: buildBody(context, bloc),
-    );
-  }
-
-  Widget buildBody(BuildContext context, RecipeBloc bloc) {
     return Container(
       child: Column(
         children: <Widget>[
@@ -36,19 +22,7 @@ class RecipeTypeChooserState extends State<RecipeTypeChooser> {
             height: 16.0,
           ),
           Flexible(
-            child: buildRecipeTypeList(context, bloc),
-          ),
-          const Divider(
-            color: Colors.grey,
-            height: 16.0,
-          ),
-          Center(
-            child: RaisedButton(
-              child: const Text("Continue to ingredient selection!"),
-              onPressed: () {
-                Navigator.pushNamed(context, "/ingredientsChooser");
-              },
-            ),
+            child: buildRecipeTypeList(context, bloc, state),
           ),
         ],
       ),
@@ -56,7 +30,8 @@ class RecipeTypeChooserState extends State<RecipeTypeChooser> {
     );
   }
 
-  Widget buildRecipeTypeList(BuildContext context, RecipeBloc bloc) {
+  Widget buildRecipeTypeList(
+      BuildContext context, RecipeBloc bloc, FilterDialogState state) {
     return StreamBuilder<List<String>>(
       stream: bloc.recipeTypes,
       builder: (BuildContext context, AsyncSnapshot<List<String>> snapshot) {
@@ -70,18 +45,15 @@ class RecipeTypeChooserState extends State<RecipeTypeChooser> {
           itemCount: snapshot.data.length,
           itemBuilder: (BuildContext context, int index) {
             // fill valuesMap
-            recipeTypeSelectedValues.putIfAbsent(snapshot.data[index], () {
-              return false;
-            });
+            state.addIfAbsentRecipeType(snapshot.data[index]);
 
             return CheckboxListTile(
               title: Text(snapshot.data[index]),
-              value: recipeTypeSelectedValues[snapshot.data[index]],
+              value: state.getValueRecipeType(snapshot.data[index]),
               onChanged: (bool value) {
-                setState(() {
-                  recipeTypeSelectedValues[snapshot.data[index]] = value;
-                  bloc.setSelectedRecipeType(snapshot.data[index], value);
-                });
+                print("changed recipe type ${snapshot.data[index]}");
+                state.changeRecipeTypeSelectedValues(
+                    index, value, snapshot.data[index]);
               },
             );
           },
