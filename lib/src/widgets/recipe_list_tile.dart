@@ -2,6 +2,7 @@ import "dart:async";
 import "package:flutter/material.dart";
 import "../blocs/recipe_provider.dart";
 import "../models/recipe_model.dart";
+import "../widgets/loading_container.dart";
 
 class RecipeListTile extends StatelessWidget {
   final int recipeId;
@@ -17,8 +18,7 @@ class RecipeListTile extends StatelessWidget {
       builder: (BuildContext context,
           AsyncSnapshot<Map<int, Future<RecipeModel>>> snapshot) {
         if (!snapshot.hasData) {
-          // TODO: Loading Container
-          return const Text("snapshot no data");
+          return LoadingContainer();
         }
 
         return FutureBuilder<RecipeModel>(
@@ -26,8 +26,7 @@ class RecipeListTile extends StatelessWidget {
             builder: (BuildContext context,
                 AsyncSnapshot<RecipeModel> recipeSnapshot) {
               if (!recipeSnapshot.hasData) {
-                // TODO: Loading Container
-                return const Text("recipeSnapshot no data");
+                return LoadingContainer();
               }
 
               return buildTile(context, recipeSnapshot.data);
@@ -46,6 +45,7 @@ class RecipeListTile extends StatelessWidget {
             recipe.imgUrl,
             height: 90,
             width: 90,
+            fit: BoxFit.fill,
           ),
           onTap: () => Navigator.pushNamed(context, "/${recipe.id}"),
         ),
