@@ -2,6 +2,7 @@ import "dart:async";
 import "package:flutter/material.dart";
 import "../blocs/recipe_provider.dart";
 import "../models/recipe_model.dart";
+import "../widgets/details_tab_bar.dart";
 
 class RecipeDetails extends StatelessWidget {
   final int recipeId;
@@ -15,6 +16,7 @@ class RecipeDetails extends StatelessWidget {
     return Scaffold(
       appBar: AppBar(
         title: const Text("Cookmergency :)"),
+        //backgroundColor: Colors.transparent,
       ),
       body: buildDetails(bloc),
     );
@@ -50,27 +52,8 @@ class RecipeDetails extends StatelessWidget {
 
   Widget buildRecipeDetails(RecipeModel recipe) {
     return Container(
-      margin: const EdgeInsets.all(8.0),
-      child: Column(
-        children: <Widget>[
-          Text(
-            recipe.title,
-            style: const TextStyle(
-              fontSize: 20,
-            ),
-          ),
-          const Divider(),
-          const Text(
-            "Zutaten",
-            style: TextStyle(
-              fontSize: 15,
-            ),
-          ),
-          Text(recipe.ingredients.toString()),
-          const Divider(),
-          Text(recipe.preparationText)
-        ],
-      ),
+      //margin: const EdgeInsets.all(8.0),
+      child: DetailsTabBar(recipe),
     );
   }
 }

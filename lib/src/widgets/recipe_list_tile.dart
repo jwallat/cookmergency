@@ -36,21 +36,21 @@ class RecipeListTile extends StatelessWidget {
   }
 
   Widget buildTile(BuildContext context, RecipeModel recipe) {
-    return Column(
-      children: <Widget>[
-        ListTile(
-          title: Text(recipe.title),
-          subtitle: const Text("Maybe score on a later date"),
-          trailing: Image.network(
+    return Card(
+      child: ListTile(
+        title: Text(recipe.title),
+        subtitle: const Text("Maybe score on a later date"),
+        leading: ClipRRect(
+          child: Image.network(
             recipe.imgUrl,
             height: 90,
             width: 90,
             fit: BoxFit.fill,
           ),
-          onTap: () => Navigator.pushNamed(context, "/${recipe.id}"),
+          borderRadius: const BorderRadius.all(Radius.circular(3.0)),
         ),
-        const Divider(),
-      ],
+        onTap: () => Navigator.pushNamed(context, "/${recipe.id}"),
+      ),
     );
   }
 }
