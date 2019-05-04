@@ -1,5 +1,6 @@
 import "package:flutter/material.dart";
 import "blocs/recipe_provider.dart";
+import "screens/add_recipe.dart";
 import "screens/filter_dialog.dart";
 import "screens/recipe_details.dart";
 import "screens/recipes_list.dart";
@@ -43,6 +44,12 @@ class App extends StatelessWidget {
       return MaterialPageRoute<dynamic>(
         builder: (BuildContext context) {
           return const FilterDialog();
+        },
+      );
+    } else if (settings.name == "/new") {
+      return MaterialPageRoute<dynamic>(
+        builder: (BuildContext context) {
+          return AddRecipe();
         },
       );
     } else {

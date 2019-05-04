@@ -11,6 +11,12 @@ class RecipesList extends StatelessWidget {
     return Scaffold(
       appBar: AppBar(
         title: const Text("Cookmergency :)"),
+        actions: <Widget>[
+          IconButton(
+            icon: const Icon(Icons.add),
+            onPressed: () => Navigator.pushNamed(context, "/new"),
+          ),
+        ],
       ),
       body: buildBody(context, bloc),
       floatingActionButton: FloatingActionButton(
@@ -27,8 +33,7 @@ class RecipesList extends StatelessWidget {
   }
 
   Widget buildRecipeList(BuildContext context, RecipeBloc bloc) {
-    return //Text("Ok");
-        StreamBuilder<List<int>>(
+    return StreamBuilder<List<int>>(
       stream: bloc.recipeIds,
       builder: (BuildContext context, AsyncSnapshot<List<int>> snapshot) {
         if (!snapshot.hasData) {
