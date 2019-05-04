@@ -1,4 +1,6 @@
 import "package:flutter/material.dart";
+import "package:flutter_staggered_grid_view/flutter_staggered_grid_view.dart";
+import 'package:simple_slider/simple_slider.dart';
 import "../models/ingredient_model.dart";
 import "../models/recipe_model.dart";
 
@@ -25,58 +27,90 @@ class DetailsTabBarState extends State<DetailsTabBar> {
 
   @override
   Widget build(BuildContext context) {
-    return GridView.count(
-      crossAxisCount: 1,
-      shrinkWrap: true,
-      children: <Widget>[
-        Image.network(
-          recipe.imgUrl,
-          fit: BoxFit.fill,
-        ),
-        Scaffold(
-          // backgroundColor: Colors.amber,
-          appBar: TabBar(
-            tabs: const <Widget>[
-              Tab(
-                child: Text("Ingredients"),
+    return SingleChildScrollView(
+      child: Column(
+        children: <Widget>[
+          Stack(
+            alignment: AlignmentDirectional.bottomCenter,
+            fit: StackFit.loose,
+            children: <Widget>[
+              // ImageSliderWidget(
+              //   imageUrls: <String>[recipe.imgUrl],
+              //   imageBorderRadius: BorderRadius.zero,
+              // ),
+              Image.network(
+                recipe.imgUrl,
+                fit: BoxFit.fill,
+                alignment: Alignment.topCenter,
               ),
-              Tab(
-                child: Text("Details"),
+              Container(
+                alignment: Alignment.center,
+                child: Text(
+                  recipe.title,
+                  style: const TextStyle(
+                    fontSize: 18,
+                    fontWeight: FontWeight.bold,
+                  ),
+                ),
+                decoration: BoxDecoration(
+                  color: Colors.white,
+                  borderRadius: const BorderRadius.only(
+                    topLeft: Radius.circular(20),
+                    topRight: Radius.circular(20),
+                  ),
+                ),
+                height: 40,
               ),
             ],
-            controller: tabController,
-            labelColor: Colors.black,
           ),
-          body: Container(
-            // color: Colors.amber,
-            child: TabBarView(
-              children: <Widget>[
-                buildIngredientsList(),
-                buildDetailsText(),
-              ],
-              controller: tabController,
+          Divider(),
+          Container(
+            child: const Text(
+              "Zubereitung",
+              style: TextStyle(
+                fontSize: 16,
+                fontWeight: FontWeight.bold,
+                // backgroundColor: Colors.amber,
+              ),
+              textAlign: TextAlign.left,
             ),
+            margin: const EdgeInsets.only(left: 8, right: 8),
           ),
-        )
-      ],
+          buildDetailsText(),
+          Divider(),
+          Container(
+            child: const Text(
+              "Zutaten",
+              style: TextStyle(
+                fontSize: 16,
+                fontWeight: FontWeight.bold,
+              ),
+              textAlign: TextAlign.left,
+            ),
+            margin: const EdgeInsets.only(left: 8, right: 8, bottom: 8),
+          ),
+          buildIngredientsList(),
+        ],
+        crossAxisAlignment: CrossAxisAlignment.start,
+      ),
     );
   }
 
   Widget buildIngredientsList() {
-    return Container(
-      margin: const EdgeInsets.all(8.0),
-      child: ListView.builder(
-        itemExtent: 20.0,
-        itemCount: recipe.ingredients.length,
-        itemBuilder: (BuildContext context, int index) {
-          final IngredientAmountModel ingredient = recipe.ingredients[index];
+    final List<Row> ingredientList = <Row>[];
+    for (int i = 0; i < recipe.ingredients.length; i++) {
+      final Row ingredientRow = Row(
+        children: buildIngredientsWidgets(recipe.ingredients[i]),
+        mainAxisAlignment: MainAxisAlignment.center,
+      );
+      ingredientList.add(ingredientRow);
+    }
 
-          return Row(
-            children: buildIngredientsWidgets(ingredient),
-            mainAxisAlignment: MainAxisAlignment.center,
-          );
-        },
+    return Container(
+      child: Column(
+        children: ingredientList,
       ),
+      margin: const EdgeInsets.only(bottom: 40),
     );
   }
 
@@ -85,7 +119,7 @@ class DetailsTabBarState extends State<DetailsTabBar> {
       margin: const EdgeInsets.all(8.0),
       child: Text(
         recipe.preparationText,
-        style: TextStyle(
+        style: const TextStyle(
           fontSize: 14,
         ),
       ),
@@ -93,7 +127,7 @@ class DetailsTabBarState extends State<DetailsTabBar> {
   }
 
   List<Widget> buildIngredientsWidgets(IngredientAmountModel ingredient) {
-    final List<Widget> ingredients = [
+    final List<Widget> ingredients = <Widget>[
       Container(
         child: Text(ingredient.ingredientName),
         width: 170,

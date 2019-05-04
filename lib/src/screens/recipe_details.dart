@@ -14,23 +14,32 @@ class RecipeDetails extends StatelessWidget {
     final RecipeBloc bloc = RecipeProvider.of(context);
 
     return Scaffold(
-      appBar: AppBar(
-        title: const Text("Cookmergency :)"),
-        //backgroundColor: Colors.transparent,
+      body: Stack(
+        children: <Widget>[
+          buildDetails(bloc),
+          Positioned(
+            top: 0,
+            left: 0,
+            right: 0,
+            child: AppBar(
+              // title: const Text("Cookmergency :)"),
+              backgroundColor: Colors.transparent,
+              elevation: 0,
+            ),
+          ),
+        ],
       ),
-      body: buildDetails(bloc),
     );
   }
 
   Widget buildDetails(RecipeBloc bloc) {
     // retrieve right RecipeModel from bloc with recipeId
-
     return StreamBuilder<Map<int, Future<RecipeModel>>>(
       stream: bloc.recipes,
       builder: (BuildContext context,
           AsyncSnapshot<Map<int, Future<RecipeModel>>> snapshot) {
         if (!snapshot.hasData) {
-          return const Text("Loading");
+          return const CircularProgressIndicator();
         }
 
         final Future<RecipeModel> recipeFuture = snapshot.data[recipeId];
@@ -40,9 +49,8 @@ class RecipeDetails extends StatelessWidget {
           builder: (BuildContext context,
               AsyncSnapshot<RecipeModel> recipeSnapshot) {
             if (!recipeSnapshot.hasData) {
-              return const Text("Item still loading");
+              return const CircularProgressIndicator();
             }
-
             return buildRecipeDetails(recipeSnapshot.data);
           },
         );
@@ -52,7 +60,6 @@ class RecipeDetails extends StatelessWidget {
 
   Widget buildRecipeDetails(RecipeModel recipe) {
     return Container(
-      //margin: const EdgeInsets.all(8.0),
       child: DetailsTabBar(recipe),
     );
   }
