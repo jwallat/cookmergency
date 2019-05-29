@@ -24,6 +24,8 @@ dependencies:
   direct_select: ^1.0.0
   sqljocky5: ^2.2.1
   rxdart: ^0.18.0
+  # flutter_typeahead: ^1.5.0
+  autocomplete_textfield: ^1.6.4
 
 dev_dependencies:
   flutter_test:

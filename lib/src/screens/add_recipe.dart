@@ -1,9 +1,24 @@
+import 'package:cookmergency/src/blocs/recipe_provider.dart';
+import 'package:cookmergency/src/models/ingredient_model.dart';
 import "package:flutter/material.dart";
-import "package:direct_select/direct_select.dart";
+import "package:autocomplete_textfield/autocomplete_textfield.dart";
+import "../blocs/validation_provider.dart";
 
-class AddRecipe extends StatelessWidget {
+class AddRecipe extends StatefulWidget {
+  @override
+  AddRecipeState createState() => AddRecipeState();
+}
+
+class AddRecipeState extends State<AddRecipe> {
+  GlobalKey<AutoCompleteTextFieldState<String>> key = GlobalKey();
+  String chosenRecipeType = "";
+  List<IngredientAmountModel> chosenIngredients = <IngredientAmountModel>[];
+
   @override
   Widget build(BuildContext context) {
+    final ValidationBloc validationBloc = ValidationProvider.of(context);
+    final RecipeBloc recipeBloc = RecipeProvider.of(context);
+
     return Scaffold(
       appBar: AppBar(
         title: const Text("New Recipe"),
@@ -12,63 +27,19 @@ class AddRecipe extends StatelessWidget {
         child: Container(
           child: Column(
             children: <Widget>[
-              const Text(
-                "Title",
-                style: TextStyle(
-                  fontSize: 16,
-                  fontWeight: FontWeight.bold,
-                ),
-              ),
-              TextFormField(
-                maxLength: 50,
-              ),
+              titleField(validationBloc),
               Divider(),
-              const Text(
-                "Type",
-                style: TextStyle(
-                  fontSize: 16,
-                  fontWeight: FontWeight.bold,
-                ),
-              ),
-              TextFormField(),
+              recipeTypeField(validationBloc, recipeBloc),
               Divider(),
-              const Text(
-                "Preparation text",
-                style: TextStyle(
-                  fontSize: 16,
-                  fontWeight: FontWeight.bold,
-                ),
-              ),
-              TextFormField(
-                minLines: 4,
-                maxLines: 4,
-              ),
+              preperationTextField(validationBloc),
               Divider(),
-              const Text(
-                "Image Url",
-                style: TextStyle(
-                  fontSize: 16,
-                  fontWeight: FontWeight.bold,
-                ),
-              ),
-              TextFormField(
-                maxLength: 300,
-              ),
+              imageURLTextField(validationBloc),
               Divider(),
-              const Text(
-                "Ingredients",
-                style: TextStyle(
-                  fontSize: 16,
-                  fontWeight: FontWeight.bold,
-                ),
-              ),
+              ingredientsTextField(validationBloc),
               Divider(),
               Row(
                 children: <Widget>[
-                  RaisedButton(
-                    child: const Text("Submit"),
-                    onPressed: () => <dynamic>{},
-                  ),
+                  submitButton(validationBloc),
                 ],
                 mainAxisAlignment: MainAxisAlignment.end,
               ),
@@ -78,6 +49,102 @@ class AddRecipe extends StatelessWidget {
           margin: const EdgeInsets.all(8),
         ),
       ),
+    );
+  }
+
+  Widget titleField(ValidationBloc validationBloc) {
+    return StreamBuilder<dynamic>(
+      stream: validationBloc.title,
+      builder: (BuildContext context, AsyncSnapshot<dynamic> snapshot) {
+        return TextField(
+          onChanged: validationBloc.changeTitle,
+          decoration: InputDecoration(
+            labelText: "Title",
+            hintText: "Hausgemachter Apfelstrudel",
+            errorText: snapshot.error,
+          ),
+        );
+      },
+    );
+  }
+
+  Widget recipeTypeField(ValidationBloc validationBloc, RecipeBloc recipeBloc) {
+    final List<String> recipeTypeSuggestions = recipeBloc.recipeTypesList;
+
+    return SimpleAutoCompleteTextField(
+      key: key,
+      suggestions: recipeTypeSuggestions,
+      decoration: InputDecoration(
+        labelText: "Recipe Type",
+        hintText: "Currys",
+      ),
+      clearOnSubmit: false,
+      submitOnSuggestionTap: true,
+      onFocusChanged: (bool hasFocus) {},
+    );
+  }
+
+  Widget preperationTextField(ValidationBloc validationBloc) {
+    return StreamBuilder<dynamic>(
+      stream: validationBloc.preperationText,
+      builder: (BuildContext context, AsyncSnapshot<dynamic> snapshot) {
+        return TextField(
+          onChanged: validationBloc.changePreperationText,
+          decoration: InputDecoration(
+            labelText: "Preperation Text",
+            hintText: "Zuerst Eier und Mehl verrühren...",
+            errorText: snapshot.error,
+          ),
+          minLines: 1,
+          maxLines: 4,
+        );
+      },
+    );
+  }
+
+  Widget imageURLTextField(ValidationBloc validationBloc) {
+    return StreamBuilder<dynamic>(
+      stream: validationBloc.imageURL,
+      builder: (BuildContext context, AsyncSnapshot<dynamic> snapshot) {
+        return TextField(
+          onChanged: validationBloc.changeImageURL,
+          decoration: InputDecoration(
+            labelText: "Image URL",
+            hintText: "www.image.com/yummi_apple_pie",
+            errorText: snapshot.error,
+          ),
+        );
+      },
+    );
+  }
+
+  Widget ingredientsTextField(ValidationBloc validationBloc) {
+    return StreamBuilder<dynamic>(
+      stream: validationBloc.ingredients,
+      builder: (BuildContext context, AsyncSnapshot<dynamic> snapshot) {
+        return const Text("Ingredients here...to be changed...");
+        // return TextField(
+        //   onChanged: validationBloc.changeIngredients,
+        //   decoration: InputDecoration(
+        //     labelText: "Ingreidents",
+        //     hintText: "Zutaten hier",
+        //     errorText: snapshot.error,
+        //   ),
+        // );
+      },
+    );
+  }
+
+  Widget submitButton(ValidationBloc validationBloc) {
+    return StreamBuilder<dynamic>(
+      stream: validationBloc.submitValid,
+      builder: (BuildContext context, AsyncSnapshot<dynamic> snapshot) {
+        return RaisedButton(
+          child: const Text("Submit"),
+          color: Colors.blue,
+          onPressed: snapshot.hasData ? validationBloc.submit : null,
+        );
+      },
     );
   }
 }

@@ -1,5 +1,6 @@
 import "package:flutter/material.dart";
 import "blocs/recipe_provider.dart";
+import "blocs/validation_provider.dart";
 import "screens/add_recipe.dart";
 import "screens/filter_dialog.dart";
 import "screens/recipe_details.dart";
@@ -9,9 +10,11 @@ class App extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return RecipeProvider(
-      child: MaterialApp(
-        title: "Cookmergency!",
-        onGenerateRoute: routes,
+      child: ValidationProvider(
+        child: MaterialApp(
+          title: "Cookmergency!",
+          onGenerateRoute: routes,
+        ),
       ),
     );
   }

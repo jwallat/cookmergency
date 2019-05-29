@@ -1,6 +1,4 @@
 import "package:flutter/material.dart";
-import "package:flutter_staggered_grid_view/flutter_staggered_grid_view.dart";
-import 'package:simple_slider/simple_slider.dart';
 import "../models/ingredient_model.dart";
 import "../models/recipe_model.dart";
 
