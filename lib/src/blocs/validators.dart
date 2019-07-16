@@ -61,4 +61,15 @@ class Validators {
       }
     },
   );
+
+  final StreamTransformer<String, String> validateIngredientAmounts =
+      StreamTransformer<String, String>.fromHandlers(
+    handleData: (String ingredientAmount, EventSink<String> sink) {
+      if (ingredientAmount.isNotEmpty) {
+        sink.add(ingredientAmount);
+      } else {
+        sink.addError("Please enter an amount!");
+      }
+    },
+  );
 }

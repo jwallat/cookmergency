@@ -22,6 +22,8 @@ class RecipeBloc {
   final Map<String, bool> _ingredientsMap = <String, bool>{};
 
   List<String> recipeTypesList = <String>[];
+  List<String> ingredientsList = <String>[];
+  List<String> unitsList = <String>[];
 
   RecipeBloc() {
     _recipeFetcher.stream
@@ -78,9 +80,9 @@ class RecipeBloc {
   }
 
   dynamic fetchIngredients() async {
-    final List<String> ingredients = await repository.fetchIngredients();
+    ingredientsList = await repository.fetchIngredients();
 
-    _ingredients.add(ingredients);
+    _ingredients.add(ingredientsList);
   }
 
   void setSelectedRecipeType(String recipeType, bool value) {

@@ -14,4 +14,6 @@ class IngredientAmountModel {
     amount = row[3].toString();
     unit = row[4];
   }
+
+  IngredientAmountModel.fromNothing() {}
 }

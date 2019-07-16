@@ -1,8 +1,12 @@
 import "dart:async";
 import "package:rxdart/rxdart.dart";
+import "../models/ingredient_model.dart";
+import "../resources/repository.dart";
 import "validators.dart";
 
 class ValidationBloc with Validators {
+  final Repository repository = Repository();
+
   final BehaviorSubject<String> _titleController = BehaviorSubject<String>();
   final BehaviorSubject<String> _recipeTypeController =
       BehaviorSubject<String>();
@@ -11,6 +15,8 @@ class ValidationBloc with Validators {
   final BehaviorSubject<String> _imageURLController = BehaviorSubject<String>();
   final BehaviorSubject<List<String>> _ingredientsController =
       BehaviorSubject<List<String>>();
+  final BehaviorSubject<String> _ingredientAmountController =
+      BehaviorSubject<String>();
 
   // Add data to stream
   Function(String) get changeTitle => _titleController.sink.add;
@@ -20,6 +26,8 @@ class ValidationBloc with Validators {
   Function(String) get changeImageURL => _imageURLController.sink.add;
   Function(List<String>) get changeIngredients =>
       _ingredientsController.sink.add;
+  Function(String) get changeIngredientAmount =>
+      _ingredientAmountController.sink.add;
 
   // Retrieve data from stream
   Stream<String> get title => _titleController.stream.transform(validateTitle);
@@ -31,48 +39,39 @@ class ValidationBloc with Validators {
       _imageURLController.stream.transform(validateImageURL);
   Stream<List<String>> get ingredients =>
       _ingredientsController.stream.transform(validateIngredients);
+  Stream<String> get ingredientAmount =>
+      _ingredientAmountController.stream.transform(validateIngredientAmounts);
 
-  // Stream<bool> get submitValid => Observable.combineLatest5(
-  //       title,
-  //       recipeType,
-  //       preperationText,
-  //       imageURL,
-  //       ingredients,
-  //       (dynamic title, dynamic recipeType, dynamic preperationText,
-  //               dynamic imageURL, dynamic ingredients) =>
-  //           true,
-  //     );
-
-  Stream<bool> get submitValid => Observable.combineLatest4(
+  Stream<bool> get submitValid => Observable.combineLatest3(
         title,
-        recipeType,
         preperationText,
         imageURL,
-        (dynamic title, dynamic recipeType, dynamic preperationText,
-                dynamic imageURL) =>
-            true,
+        (dynamic title, dynamic preperationText, dynamic imageURL) => true,
       );
 
-  void submit() {
+  bool submit(
+      List<IngredientAmountModel> chosenIngredients, String recipeType) {
     final String validTitle = _titleController.value;
-    final String validRecipeTitle = _recipeTypeController.value;
     final String validPreperationText = _preperationTextController.value;
     final String validImageURL = _imageURLController.value;
-    final List<String> validIngredients = _ingredientsController.value;
 
     print(validTitle);
-    print(validRecipeTitle);
+    print(recipeType);
     print(validPreperationText);
     print(validImageURL);
-    print(validIngredients);
+    print(chosenIngredients);
+
+    // add new recipe to DB and return true if successfull/false if smth went wrong
+    repository.addRecipe(validTitle, recipeType, validPreperationText,
+        validImageURL, chosenIngredients);
+
+    return true;
   }
 
   void dispose() {
     _titleController.close();
-    _recipeTypeController.close();
     _preperationTextController.close();
     _imageURLController.close();
-    _ingredientsController.close();
   }
 }
 

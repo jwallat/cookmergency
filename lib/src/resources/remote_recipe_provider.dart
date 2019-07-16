@@ -1,5 +1,7 @@
 import "dart:async";
+import 'dart:math';
 import "package:sqljocky5/sqljocky.dart";
+import "../models/ingredient_model.dart";
 import "../models/recipe_model.dart";
 
 class RemoteRecipeProvider {
@@ -19,7 +21,7 @@ class RemoteRecipeProvider {
     final Results results = await (await conn.execute(
             "SELECT * FROM IngredientAmounts ia JOIN Recipes r ON (ia.recipeTitle = r.recipeTitle) WHERE r.id='$id'"))
         .deStream();
-    conn.close();
+    await conn.close();
 
     if (results.isNotEmpty) {
       //print("DB responded with $results");
@@ -35,7 +37,7 @@ class RemoteRecipeProvider {
     final Results results =
         await (await conn.execute("select recipeTypeName from RecipeTypes"))
             .deStream();
-    conn.close();
+    await conn.close();
 
     if (results.isNotEmpty) {
       //print("DB responded with $results");
@@ -53,7 +55,7 @@ class RemoteRecipeProvider {
     final Results results = await (await conn
             .execute("select ingredientTypeName from IngredientTypes"))
         .deStream();
-    conn.close();
+    await conn.close();
 
     if (results.isNotEmpty) {
       //print("DB responded with $results");
@@ -71,7 +73,7 @@ class RemoteRecipeProvider {
     final Results results =
         await (await conn.execute("select ingredientName from Ingredients"))
             .deStream();
-    conn.close();
+    await conn.close();
 
     if (results.isNotEmpty) {
       //print("DB responded with $results");
@@ -121,7 +123,7 @@ class RemoteRecipeProvider {
     //print(query);
     conn = await MySqlConnection.connect(s);
     final Results results = await (await conn.execute(query)).deStream();
-    conn.close();
+    await conn.close();
 
     if (results.isNotEmpty) {
       //print("DB responded with $results");
@@ -132,6 +134,94 @@ class RemoteRecipeProvider {
       return recipeIds;
     }
     return null;
+  }
+
+  Future<bool> addRecipeType(String recipeType) async {
+    final int id = Random().nextInt(1000000);
+    conn = await MySqlConnection.connect(s);
+    try {
+      final Results results = await (await conn.execute(
+              "INSERT INTO RecipeTypes (id, recipeTypeName) VALUES ('$id', '$recipeType')"))
+          .deStream();
+      await conn.close();
+
+      if (results.isNotEmpty) {
+        print("DB responded with $results");
+
+        return true;
+      }
+    } catch (e) {
+      print("Exception " + e.toString());
+    }
+
+    return false;
+  }
+
+  Future<bool> addRecipeToDB(String title, String recipeType,
+      String preperationText, String imageURL) async {
+    final int id = Random().nextInt(1000000);
+    try {
+      conn = await MySqlConnection.connect(s);
+      final Results results = await (await conn.execute(
+              "INSERT INTO Recipes (id, recipeTypeName, recipeTitle, preparationText, imageURL) VALUES "
+              "('$id', '$recipeType', '$title', '$preperationText', '$imageURL')"))
+          .deStream();
+      await conn.close();
+
+      if (results.isNotEmpty) {
+        print("DB responded with $results");
+
+        return true;
+      }
+    } catch (e) {
+      print("Exception " + e);
+    }
+
+    return false;
+  }
+
+  Future<bool> addIngredient(String name) async {
+    final int id = Random().nextInt(1000000);
+
+    try {
+      conn = await MySqlConnection.connect(s);
+      final Results results = await (await conn.execute(
+              "INSERT INTO Ingredients (id, ingredientTypeName, ingredientName) VALUES ('$id', 'Diverses', '$name')"))
+          .deStream();
+      await conn.close();
+
+      if (results.isNotEmpty) {
+        print("DB responded with $results");
+
+        return true;
+      }
+    } catch (e) {
+      print("Exception " + e.toString());
+    }
+
+    return false;
+  }
+
+  Future<bool> addIngredientAmountModel(IngredientAmountModel model) async {
+    final int id = Random().nextInt(1000000);
+    try {
+      conn = await MySqlConnection.connect(s);
+      final Results results = await (await conn.execute(
+              "INSERT INTO `IngredientAmounts` (`id`, `ingredientName`, `recipeTitle`, `amount`, `amountUnit`) VALUES "
+              "('$id', '${model.ingredientName}', '${model.recipeTitle}', '${model.amount}', '${model.unit}')"))
+          .deStream();
+      await conn.close();
+
+      if (results.isNotEmpty) {
+        print("DB responded with $results");
+
+        return true;
+      }
+    } catch (e) {
+      print("Exception " + e.toString());
+    }
+
+    return false;
   }
 }
 

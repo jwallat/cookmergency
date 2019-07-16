@@ -3,6 +3,7 @@ import 'package:cookmergency/src/models/ingredient_model.dart';
 import "package:flutter/material.dart";
 import "package:autocomplete_textfield/autocomplete_textfield.dart";
 import "../blocs/validation_provider.dart";
+import "../widgets/added_ingreident_tile.dart";
 
 class AddRecipe extends StatefulWidget {
   @override
@@ -11,7 +12,12 @@ class AddRecipe extends StatefulWidget {
 
 class AddRecipeState extends State<AddRecipe> {
   GlobalKey<AutoCompleteTextFieldState<String>> key = GlobalKey();
+  GlobalKey<AutoCompleteTextFieldState<String>> ingredientsKey = GlobalKey();
+  final TextEditingController _amountTextController = TextEditingController();
+  GlobalKey<AutoCompleteTextFieldState<String>> amountKey = GlobalKey();
+  GlobalKey<AutoCompleteTextFieldState<String>> unitKey = GlobalKey();
   String chosenRecipeType = "";
+  IngredientAmountModel currentIngredient = IngredientAmountModel.fromNothing();
   List<IngredientAmountModel> chosenIngredients = <IngredientAmountModel>[];
 
   @override
@@ -35,7 +41,7 @@ class AddRecipeState extends State<AddRecipe> {
               Divider(),
               imageURLTextField(validationBloc),
               Divider(),
-              ingredientsTextField(validationBloc),
+              ingredientsTextField(validationBloc, recipeBloc),
               Divider(),
               Row(
                 children: <Widget>[
@@ -78,6 +84,16 @@ class AddRecipeState extends State<AddRecipe> {
         labelText: "Recipe Type",
         hintText: "Currys",
       ),
+      textChanged: (String recipeType) {
+        setState(() {
+          chosenRecipeType = recipeType;
+        });
+      },
+      textSubmitted: (String recipeType) {
+        setState(() {
+          chosenRecipeType = recipeType;
+        });
+      },
       clearOnSubmit: false,
       submitOnSuggestionTap: true,
       onFocusChanged: (bool hasFocus) {},
@@ -118,21 +134,154 @@ class AddRecipeState extends State<AddRecipe> {
     );
   }
 
-  Widget ingredientsTextField(ValidationBloc validationBloc) {
+  Widget ingredientsTextField(
+      ValidationBloc validationBloc, RecipeBloc recipeBloc) {
     return StreamBuilder<dynamic>(
       stream: validationBloc.ingredients,
       builder: (BuildContext context, AsyncSnapshot<dynamic> snapshot) {
-        return const Text("Ingredients here...to be changed...");
-        // return TextField(
-        //   onChanged: validationBloc.changeIngredients,
-        //   decoration: InputDecoration(
-        //     labelText: "Ingreidents",
-        //     hintText: "Zutaten hier",
-        //     errorText: snapshot.error,
-        //   ),
-        // );
+        // return const Text("Ingredients here...to be changed...");
+        return Column(
+          children: <Widget>[
+            ingredientsAdder(recipeBloc, snapshot),
+            Divider(),
+            const Text(
+              "Ingredients",
+              textAlign: TextAlign.left,
+              style: TextStyle(
+                fontSize: 16,
+                // fontWeight: FontWeight.bold,
+              ),
+            ),
+            ingredientsList(),
+          ],
+          crossAxisAlignment: CrossAxisAlignment.start,
+        );
       },
     );
+  }
+
+  Widget ingredientsAdder(
+      RecipeBloc recipeBloc, AsyncSnapshot<dynamic> snapshot) {
+    final List<String> ingredientsSuggestions = recipeBloc.ingredientsList;
+    // TODO: add real unit suggestions from db
+    final List<String> unitSuggestions = ["g", "kg", "Stk."];
+
+    return Row(
+      children: <Widget>[
+        Expanded(
+          child: SimpleAutoCompleteTextField(
+            textChanged: (String name) {
+              print("submitted");
+              setState(() {
+                currentIngredient.ingredientName = name;
+              });
+            },
+            textSubmitted: (String name) {
+              print("submitted");
+              setState(() {
+                currentIngredient.ingredientName = name;
+              });
+            },
+            key: ingredientsKey,
+            suggestions: ingredientsSuggestions,
+            decoration: InputDecoration(
+              labelText: "Ingredient",
+              hintText: "Sugar",
+            ),
+            clearOnSubmit: false,
+            submitOnSuggestionTap: true,
+            onFocusChanged: (bool hasFocus) {},
+          ),
+        ),
+        Container(
+          child: TextField(
+            onChanged: (String amount) {
+              setState(() {
+                print("submitted");
+                currentIngredient.amount = amount;
+                validationBloc.changeIngredientAmount;
+              });
+            },
+            key: amountKey,
+            controller: _amountTextController,
+            decoration: InputDecoration(
+              labelText: "Amount",
+              hintText: "300",
+              errorText: snapshot.error,
+            ),
+          ),
+          width: 100,
+        ),
+        Container(
+          child: SimpleAutoCompleteTextField(
+            textChanged: (String unit) {
+              print("submitted");
+              currentIngredient.unit = unit;
+            },
+            textSubmitted: (String unit) {
+              print("submitted");
+              setState(() {
+                currentIngredient.unit = unit;
+              });
+            },
+            key: unitKey,
+            suggestions: unitSuggestions,
+            decoration: InputDecoration(
+              labelText: "Unit",
+              hintText: "g",
+            ),
+            clearOnSubmit: false,
+            submitOnSuggestionTap: true,
+            onFocusChanged: (bool hasFocus) {},
+          ),
+          width: 80,
+        ),
+        Container(
+          child: FlatButton(
+            child: const Icon(Icons.add),
+            onPressed: () {
+              setState(() {
+                ingredientsKey.currentState.clear();
+                print("1");
+                _amountTextController.clear();
+                print("2");
+                unitKey.currentState.clear();
+                print("3");
+                print(
+                    "${currentIngredient.ingredientName} # ${currentIngredient.amount} # ${currentIngredient.unit}");
+                chosenIngredients.add(currentIngredient);
+                currentIngredient = IngredientAmountModel.fromNothing();
+              });
+            },
+          ),
+          width: 50,
+        ),
+      ],
+    );
+  }
+
+  Widget ingredientsList() {
+    return Column(
+      children: <Widget>[
+        if (chosenIngredients.isEmpty)
+          Center(
+            child: const Text("Please add ingredients to your new recipe!"),
+          ),
+        for (IngredientAmountModel ia in chosenIngredients)
+          AddedIngredientTile(
+            model: ia,
+            selfdestructionCallback: removeIngredientsListItem,
+          ),
+      ],
+    );
+  }
+
+  // callback method that is used to delete items from the chosenIngredients
+  // list that shows the cards of chosen ingredients
+  void removeIngredientsListItem(IngredientAmountModel item) {
+    setState(() {
+      chosenIngredients.remove(item);
+    });
   }
 
   Widget submitButton(ValidationBloc validationBloc) {
@@ -142,7 +291,12 @@ class AddRecipeState extends State<AddRecipe> {
         return RaisedButton(
           child: const Text("Submit"),
           color: Colors.blue,
-          onPressed: snapshot.hasData ? validationBloc.submit : null,
+          onPressed: ((!snapshot.hasData || !snapshot.data) ||
+                  chosenIngredients.isEmpty ||
+                  chosenRecipeType.isEmpty)
+              ? null
+              : () =>
+                  validationBloc.submit(chosenIngredients, chosenRecipeType),
         );
       },
     );
