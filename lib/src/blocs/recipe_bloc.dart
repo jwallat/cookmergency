@@ -72,6 +72,10 @@ class RecipeBloc {
     _recipeTypes.add(recipeTypesList);
   }
 
+  dynamic connectRemoteDB() {
+    repository.initRemoteConnection();
+  }
+
   dynamic fetchIngredientTypes() async {
     final List<String> ingredientTypes =
         await repository.fetchIngredientTypes();

@@ -8,6 +8,11 @@ class Repository {
 
   Repository();
 
+  Future<void> initRemoteConnection() async {
+    print("initDBConnection");
+    await remoteRecipeProvider.initConnection();
+  }
+
   Future<List<String>> fetchIngredients() {
     return remoteRecipeProvider.fetchIngredients();
   }
@@ -30,24 +35,53 @@ class Repository {
     return remoteRecipeProvider.fetchRecipe(id);
   }
 
-  bool addRecipe(String title, String recipeType, String preperationText,
-      String imageURL, List<IngredientAmountModel> chosenIngredients) {
+  Future<bool> addRecipe(
+      String title,
+      String recipeType,
+      String preperationText,
+      String imageURL,
+      List<IngredientAmountModel> chosenIngredients) async {
     // should probably await the add functions to ensure correct insertion order
 
     // TODO: Add recipeType
-    remoteRecipeProvider.addRecipeType(recipeType);
-    print("recipetype added");
+    if (await remoteRecipeProvider.addRecipeType(recipeType)) {
+      print("recipetype $recipeType added");
+    } else {
+      print("Error adding receipeType $recipeType");
+      return false;
+    }
     // TODO: Add recipe
-    remoteRecipeProvider.addRecipeToDB(
-        title, recipeType, preperationText, imageURL);
-    print("recipe-item added");
+    if (await remoteRecipeProvider.addRecipeToDB(
+        title, recipeType, preperationText, imageURL)) {
+      print("recipe-item $title added");
+    } else {
+      print("Error adding recipe $title");
+      return false;
+    }
     // TODO: Add single ingredients
     for (IngredientAmountModel model in chosenIngredients) {
-      remoteRecipeProvider.addIngredient(model.ingredientName);
-      print("ingredient added: ${model.ingredientName}");
+      if (await remoteRecipeProvider.addIngredient(model.ingredientName)) {
+        print("ingredient added: ${model.ingredientName}");
+      } else {
+        print("Error adding ${model.ingredientName}");
+        return false;
+      }
     }
     // TODO: Add IngredientAmounts
-    chosenIngredients.forEach(remoteRecipeProvider.addIngredientAmountModel);
+    for (IngredientAmountModel ia in chosenIngredients) {
+      if (await remoteRecipeProvider.addIngredientAmountModel(ia)) {
+        print(
+            "ingredientAmountModel added (${ia.ingredientName}, ${ia.amount}, ${ia.unit})");
+      } else {
+        print("Error adding (${ia.ingredientName}, ${ia.amount}, ${ia.unit})");
+        return false;
+      }
+    }
+
+    return true;
+  }
+
+  bool removeRecipe(String title) {
     return false;
   }
 }

@@ -295,8 +295,14 @@ class AddRecipeState extends State<AddRecipe> {
                   chosenIngredients.isEmpty ||
                   chosenRecipeType.isEmpty)
               ? null
-              : () =>
-                  validationBloc.submit(chosenIngredients, chosenRecipeType),
+              : () => validationBloc
+                      .submit(chosenIngredients, chosenRecipeType)
+                      .then((bool success) {
+                    success
+                        ? Navigator.pushNamed(context, "/")
+                        : print("Adding unsuccessful!");
+                    // TODO(jw): Should delete all the stuff if not successful
+                  }),
         );
       },
     );
