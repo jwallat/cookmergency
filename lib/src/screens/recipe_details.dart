@@ -39,7 +39,7 @@ class RecipeDetails extends StatelessWidget {
       builder: (BuildContext context,
           AsyncSnapshot<Map<int, Future<RecipeModel>>> snapshot) {
         if (!snapshot.hasData) {
-          return const CircularProgressIndicator();
+          return Center(child: const CircularProgressIndicator());
         }
 
         final Future<RecipeModel> recipeFuture = snapshot.data[recipeId];
@@ -49,7 +49,7 @@ class RecipeDetails extends StatelessWidget {
           builder: (BuildContext context,
               AsyncSnapshot<RecipeModel> recipeSnapshot) {
             if (!recipeSnapshot.hasData) {
-              return const CircularProgressIndicator();
+              return Center(child: const CircularProgressIndicator());
             }
             return buildRecipeDetails(recipeSnapshot.data);
           },
