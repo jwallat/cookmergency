@@ -25,6 +25,9 @@ class RecipeDetails extends StatelessWidget {
               // title: const Text("Cookmergency :)"),
               backgroundColor: Colors.transparent,
               elevation: 0,
+              iconTheme: IconThemeData(
+                color: Colors.black,
+              ),
             ),
           ),
         ],

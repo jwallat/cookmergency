@@ -25,83 +25,137 @@ class DetailsTabBarState extends State<DetailsTabBar> {
 
   @override
   Widget build(BuildContext context) {
-    return SingleChildScrollView(
-      child: Column(
-        children: <Widget>[
-          Stack(
-            alignment: AlignmentDirectional.bottomCenter,
-            fit: StackFit.loose,
-            children: <Widget>[
-              // ImageSliderWidget(
-              //   imageUrls: <String>[recipe.imgUrl],
-              //   imageBorderRadius: BorderRadius.zero,
-              // ),
-              Image.network(
-                recipe.imgUrl,
-                fit: BoxFit.fill,
-                alignment: Alignment.topCenter,
-              ),
-              Container(
-                alignment: Alignment.center,
-                child: Text(
-                  recipe.title,
-                  style: const TextStyle(
-                    fontSize: 18,
-                    fontWeight: FontWeight.bold,
-                  ),
-                ),
-                decoration: BoxDecoration(
-                  color: Colors.white,
-                  borderRadius: const BorderRadius.only(
-                    topLeft: Radius.circular(20),
-                    topRight: Radius.circular(20),
-                  ),
-                ),
-                height: 40,
-              ),
+    // return SingleChildScrollView(
+    //   child: Column(
+    //     children: <Widget>[
+    //       Stack(
+    //         alignment: AlignmentDirectional.bottomCenter,
+    //         fit: StackFit.loose,
+    //         children: <Widget>[
+    //           // ImageSliderWidget(
+    //           //   imageUrls: <String>[recipe.imgUrl],
+    //           //   imageBorderRadius: BorderRadius.zero,
+    //           // ),
+    //           Image.network(
+    //             recipe.imgUrl,
+    //             fit: BoxFit.fill,
+    //             alignment: Alignment.topCenter,
+    //           ),
+    //           Container(
+    //             alignment: Alignment.center,
+    //             child: Text(
+    //               recipe.title,
+    //               style: const TextStyle(
+    //                 fontSize: 18,
+    //                 fontWeight: FontWeight.bold,
+    //               ),
+    //             ),
+    //             decoration: BoxDecoration(
+    //               color: Colors.white,
+    //               borderRadius: const BorderRadius.only(
+    //                 topLeft: Radius.circular(20),
+    //                 topRight: Radius.circular(20),
+    //               ),
+    //             ),
+    //             height: 40,
+    //           ),
+    //         ],
+    //       ),
+    //       Divider(),
+    //       Container(
+    //         child: const Text(
+    //           "Zubereitung",
+    //           style: TextStyle(
+    //             fontSize: 16,
+    //             fontWeight: FontWeight.bold,
+    //             // backgroundColor: Colors.amber,
+    //           ),
+    //           textAlign: TextAlign.left,
+    //         ),
+    //         margin: const EdgeInsets.only(left: 8, right: 8),
+    //       ),
+    //       buildDetailsText(),
+    //       Divider(),
+    //       Container(
+    //         child: const Text(
+    //           "Zutaten",
+    //           style: TextStyle(
+    //             fontSize: 16,
+    //             fontWeight: FontWeight.bold,
+    //           ),
+    //           textAlign: TextAlign.left,
+    //         ),
+    //         margin: const EdgeInsets.only(left: 8, right: 8, bottom: 8),
+    //       ),
+    //       buildIngredientsList(),
+    //     ],
+    //     crossAxisAlignment: CrossAxisAlignment.start,
+    //   ),
+    // );
+    return ListView(
+      padding: const EdgeInsets.all(20),
+      children: <Widget>[
+        Container(
+          margin: const EdgeInsets.only(top: 80, bottom: 10),
+          child: Text(
+            recipe.title,
+            style: const TextStyle(
+              fontSize: 26,
+            ),
+          ),
+        ),
+        Container(
+          margin: const EdgeInsets.only(top: 20, bottom: 20),
+          child: ClipRRect(
+            child: Image.network(
+              recipe.imgUrl,
+              fit: BoxFit.fill,
+              alignment: Alignment.topCenter,
+            ),
+            borderRadius: const BorderRadius.all(Radius.circular(10)),
+          ),
+          decoration: BoxDecoration(
+            boxShadow: <BoxShadow>[
+              BoxShadow(
+                color: Colors.grey,
+                blurRadius: 10.0,
+              )
             ],
           ),
-          Divider(),
-          Container(
-            child: const Text(
-              "Zubereitung",
-              style: TextStyle(
-                fontSize: 16,
-                fontWeight: FontWeight.bold,
-                // backgroundColor: Colors.amber,
-              ),
-              textAlign: TextAlign.left,
+        ),
+        Container(
+          child: const Text(
+            "Zutaten",
+            style: TextStyle(
+              fontSize: 22,
+              // fontWeight: FontWeight.bold,
             ),
-            margin: const EdgeInsets.only(left: 8, right: 8),
+            textAlign: TextAlign.left,
           ),
-          buildDetailsText(),
-          Divider(),
-          Container(
-            child: const Text(
-              "Zutaten",
-              style: TextStyle(
-                fontSize: 16,
-                fontWeight: FontWeight.bold,
-              ),
-              textAlign: TextAlign.left,
+          margin: const EdgeInsets.only(bottom: 8),
+        ),
+        buildIngredientsList(),
+        Container(
+          child: const Text(
+            "Zubereitung",
+            style: TextStyle(
+              fontSize: 22,
+              // fontWeight: FontWeight.bold,
+              // backgroundColor: Colors.amber,
             ),
-            margin: const EdgeInsets.only(left: 8, right: 8, bottom: 8),
+            textAlign: TextAlign.left,
           ),
-          buildIngredientsList(),
-        ],
-        crossAxisAlignment: CrossAxisAlignment.start,
-      ),
+          // margin: const EdgeInsets.only(left: 8, right: 8),
+        ),
+        buildDetailsText(),
+      ],
     );
   }
 
   Widget buildIngredientsList() {
-    final List<Row> ingredientList = <Row>[];
+    final List<Widget> ingredientList = <Widget>[];
     for (int i = 0; i < recipe.ingredients.length; i++) {
-      final Row ingredientRow = Row(
-        children: buildIngredientsWidgets(recipe.ingredients[i]),
-        mainAxisAlignment: MainAxisAlignment.center,
-      );
-      ingredientList.add(ingredientRow);
+      ingredientList.add(buildIngredientsWidgets(recipe.ingredients[i]));
     }
 
     return Container(
@@ -114,35 +168,55 @@ class DetailsTabBarState extends State<DetailsTabBar> {
 
   Widget buildDetailsText() {
     return Container(
-      margin: const EdgeInsets.all(8.0),
+      margin: const EdgeInsets.only(top: 8.0),
       child: Text(
         recipe.preparationText,
         style: const TextStyle(
-          fontSize: 14,
+          fontSize: 16,
         ),
       ),
     );
   }
 
-  List<Widget> buildIngredientsWidgets(IngredientAmountModel ingredient) {
-    final List<Widget> ingredients = <Widget>[
-      Container(
-        child: Text(ingredient.ingredientName),
-        width: 170,
-        alignment: Alignment.centerLeft,
+  Widget buildIngredientsWidgets(IngredientAmountModel ingredient) {
+    return Container(
+      child: Row(
+        children: <Widget>[
+          Container(
+            child: Text(
+              ingredient.amount + " " + ingredient.unit + " ",
+              style: const TextStyle(
+                fontSize: 16,
+              ),
+            ),
+            width: MediaQuery.of(context).size.width / 2 - 20,
+            alignment: Alignment.centerRight,
+            decoration: BoxDecoration(
+                // color: Colors.lightBlue,
+                ),
+          ),
+          Container(
+            child: Text(
+              ingredient.ingredientName,
+              style: const TextStyle(
+                fontSize: 16,
+              ),
+            ),
+            width: MediaQuery.of(context).size.width / 2 - 20,
+            alignment: Alignment.centerLeft,
+          ),
+        ],
       ),
-      Container(
-        child: Text(ingredient.amount),
-        width: 124,
-        alignment: Alignment.center,
+      decoration: BoxDecoration(
+        color: const Color(0xfff2f2f2),
+        boxShadow: <BoxShadow>[
+          BoxShadow(
+            blurRadius: 0,
+            color: Colors.grey,
+          ),
+        ],
       ),
-      Container(
-        child: Text(ingredient.unit),
-        width: 100,
-        alignment: Alignment.centerRight,
-      )
-    ];
-
-    return ingredients;
+      margin: const EdgeInsets.only(top: 7),
+    );
   }
 }
