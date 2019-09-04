@@ -25,6 +25,7 @@ class App extends StatelessWidget {
         builder: (BuildContext context) {
           // load data
           final RecipeBloc bloc = RecipeProvider.of(context);
+          bloc.connectRemoteDB();
           bloc.fetchRecipeTypes();
           bloc.fetchIngredientTypes();
           bloc.fetchIngredients();

@@ -49,11 +49,15 @@ class ValidationBloc with Validators {
         (dynamic title, dynamic preperationText, dynamic imageURL) => true,
       );
 
-  bool submit(
-      List<IngredientAmountModel> chosenIngredients, String recipeType) {
+  Future<bool> submit(
+      List<IngredientAmountModel> chosenIngredients, String recipeType) async {
     final String validTitle = _titleController.value;
     final String validPreperationText = _preperationTextController.value;
     final String validImageURL = _imageURLController.value;
+
+    for (IngredientAmountModel ia in chosenIngredients) {
+      ia.recipeTitle = validTitle;
+    }
 
     print(validTitle);
     print(recipeType);
@@ -62,10 +66,8 @@ class ValidationBloc with Validators {
     print(chosenIngredients);
 
     // add new recipe to DB and return true if successfull/false if smth went wrong
-    repository.addRecipe(validTitle, recipeType, validPreperationText,
+    return repository.addRecipe(validTitle, recipeType, validPreperationText,
         validImageURL, chosenIngredients);
-
-    return true;
   }
 
   void dispose() {

@@ -1,4 +1,4 @@
-import "package:sqljocky5/sqljocky.dart";
+import "package:mysql1/mysql1.dart";
 import "ingredient_model.dart";
 
 class RecipeModel {

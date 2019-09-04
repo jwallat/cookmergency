@@ -1,6 +1,7 @@
 import "dart:async";
 import 'dart:math';
-import "package:sqljocky5/sqljocky.dart";
+//import "package:sqljocky5/sqljocky.dart";
+import "package:mysql1/mysql1.dart";
 import "../models/ingredient_model.dart";
 import "../models/recipe_model.dart";
 
@@ -16,12 +17,16 @@ class RemoteRecipeProvider {
 
   RemoteRecipeProvider();
 
-  Future<RecipeModel> fetchRecipe(int id) async {
+  Future<void> initConnection() async {
+    print("peter");
     conn = await MySqlConnection.connect(s);
-    final Results results = await (await conn.execute(
-            "SELECT * FROM IngredientAmounts ia JOIN Recipes r ON (ia.recipeTitle = r.recipeTitle) WHERE r.id='$id'"))
-        .deStream();
-    await conn.close();
+  }
+
+  Future<RecipeModel> fetchRecipe(int id) async {
+    conn = conn ?? await MySqlConnection.connect(s);
+    final Results results = await conn.query(
+        "SELECT * FROM IngredientAmounts ia JOIN Recipes r ON (ia.recipeTitle = r.recipeTitle) WHERE r.id='$id'");
+    //await conn.close();
 
     if (results.isNotEmpty) {
       //print("DB responded with $results");
@@ -33,11 +38,10 @@ class RemoteRecipeProvider {
   }
 
   Future<List<String>> fetchRecipeTypes() async {
-    conn = await MySqlConnection.connect(s);
+    conn = conn ?? await MySqlConnection.connect(s);
     final Results results =
-        await (await conn.execute("select recipeTypeName from RecipeTypes"))
-            .deStream();
-    await conn.close();
+        await conn.query("select recipeTypeName from RecipeTypes");
+    //await conn.close();
 
     if (results.isNotEmpty) {
       //print("DB responded with $results");
@@ -51,11 +55,10 @@ class RemoteRecipeProvider {
   }
 
   Future<List<String>> fetchIngredientTypes() async {
-    conn = await MySqlConnection.connect(s);
-    final Results results = await (await conn
-            .execute("select ingredientTypeName from IngredientTypes"))
-        .deStream();
-    await conn.close();
+    conn = conn ?? await MySqlConnection.connect(s);
+    final Results results =
+        await conn.query("select ingredientTypeName from IngredientTypes");
+    //await conn.close();
 
     if (results.isNotEmpty) {
       //print("DB responded with $results");
@@ -69,11 +72,10 @@ class RemoteRecipeProvider {
   }
 
   Future<List<String>> fetchIngredients() async {
-    conn = await MySqlConnection.connect(s);
+    conn = conn ?? await MySqlConnection.connect(s);
     final Results results =
-        await (await conn.execute("select ingredientName from Ingredients"))
-            .deStream();
-    await conn.close();
+        await conn.query("select ingredientName from Ingredients");
+    //await conn.close();
 
     if (results.isNotEmpty) {
       //print("DB responded with $results");
@@ -121,9 +123,9 @@ class RemoteRecipeProvider {
           ")";
     }
     //print(query);
-    conn = await MySqlConnection.connect(s);
-    final Results results = await (await conn.execute(query)).deStream();
-    await conn.close();
+    conn = conn ?? await MySqlConnection.connect(s);
+    final Results results = await conn.query(query);
+    //await conn.close();
 
     if (results.isNotEmpty) {
       //print("DB responded with $results");
@@ -137,19 +139,18 @@ class RemoteRecipeProvider {
   }
 
   Future<bool> addRecipeType(String recipeType) async {
+    if (await containsRecipeType(recipeType)) {
+      return true;
+    }
+
     final int id = Random().nextInt(1000000);
-    conn = await MySqlConnection.connect(s);
+    conn = conn ?? await MySqlConnection.connect(s);
     try {
-      final Results results = await (await conn.execute(
-              "INSERT INTO RecipeTypes (id, recipeTypeName) VALUES ('$id', '$recipeType')"))
-          .deStream();
-      await conn.close();
+      await conn.query(
+          "INSERT INTO RecipeTypes (id, recipeTypeName) VALUES ('$id', '$recipeType')");
+      //await conn.close();
 
-      if (results.isNotEmpty) {
-        print("DB responded with $results");
-
-        return true;
-      }
+      return true;
     } catch (e) {
       print("Exception " + e.toString());
     }
@@ -159,20 +160,19 @@ class RemoteRecipeProvider {
 
   Future<bool> addRecipeToDB(String title, String recipeType,
       String preperationText, String imageURL) async {
+    if (await containsRecipeTitle(title)) {
+      print("Title already exists");
+      return false;
+    }
+
     final int id = Random().nextInt(1000000);
     try {
-      conn = await MySqlConnection.connect(s);
-      final Results results = await (await conn.execute(
-              "INSERT INTO Recipes (id, recipeTypeName, recipeTitle, preparationText, imageURL) VALUES "
-              "('$id', '$recipeType', '$title', '$preperationText', '$imageURL')"))
-          .deStream();
-      await conn.close();
-
-      if (results.isNotEmpty) {
-        print("DB responded with $results");
-
-        return true;
-      }
+      conn = conn ?? await MySqlConnection.connect(s);
+      await conn.query(
+          "INSERT INTO Recipes (id, recipeTypeName, recipeTitle, preparationText, imageURL) VALUES "
+          "('$id', '$recipeType', '$title', '$preperationText', '$imageURL')");
+      //await conn.close();
+      return true;
     } catch (e) {
       print("Exception " + e);
     }
@@ -183,18 +183,17 @@ class RemoteRecipeProvider {
   Future<bool> addIngredient(String name) async {
     final int id = Random().nextInt(1000000);
 
+    if (await containsIngredient(name)) {
+      return true;
+    }
+
     try {
-      conn = await MySqlConnection.connect(s);
-      final Results results = await (await conn.execute(
-              "INSERT INTO Ingredients (id, ingredientTypeName, ingredientName) VALUES ('$id', 'Diverses', '$name')"))
-          .deStream();
-      await conn.close();
+      conn = conn ?? await MySqlConnection.connect(s);
+      await conn.query(
+          "INSERT INTO Ingredients (id, ingredientTypeName, ingredientName) VALUES ('$id', 'Diverses', '$name')");
+      //await conn.close();
 
-      if (results.isNotEmpty) {
-        print("DB responded with $results");
-
-        return true;
-      }
+      return true;
     } catch (e) {
       print("Exception " + e.toString());
     }
@@ -205,22 +204,45 @@ class RemoteRecipeProvider {
   Future<bool> addIngredientAmountModel(IngredientAmountModel model) async {
     final int id = Random().nextInt(1000000);
     try {
-      conn = await MySqlConnection.connect(s);
-      final Results results = await (await conn.execute(
-              "INSERT INTO `IngredientAmounts` (`id`, `ingredientName`, `recipeTitle`, `amount`, `amountUnit`) VALUES "
-              "('$id', '${model.ingredientName}', '${model.recipeTitle}', '${model.amount}', '${model.unit}')"))
-          .deStream();
-      await conn.close();
+      conn = conn ?? await MySqlConnection.connect(s);
+      await conn.query(
+          "INSERT INTO `IngredientAmounts` (`id`, `ingredientName`, `recipeTitle`, `amount`, `amountUnit`) VALUES "
+          "('$id', '${model.ingredientName}', '${model.recipeTitle}', '${model.amount}', '${model.unit}')");
+      //await conn.close();
 
-      if (results.isNotEmpty) {
-        print("DB responded with $results");
-
-        return true;
-      }
+      return true;
     } catch (e) {
       print("Exception " + e.toString());
     }
 
+    return false;
+  }
+
+  Future<bool> containsRecipeTitle(String recipeTitle) async {
+    conn = conn ?? await MySqlConnection.connect(s);
+    final Results results = await conn
+        .query("SELECT * FROM Recipes WHERE recipeTitle='$recipeTitle'");
+    //await conn.close();
+
+    if (results.isNotEmpty) {
+      //print("DB responded with $results");
+
+      return true;
+    }
+    return false;
+  }
+
+  Future<bool> containsIngredient(String ingredientName) async {
+    if ((await fetchIngredients()).contains(ingredientName)) {
+      return true;
+    }
+    return false;
+  }
+
+  Future<bool> containsRecipeType(String recipeType) async {
+    if ((await fetchRecipeTypes()).contains(recipeType)) {
+      return true;
+    }
     return false;
   }
 }
