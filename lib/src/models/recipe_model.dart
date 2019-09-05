@@ -21,4 +21,11 @@ class RecipeModel {
     }
     ingredients = ingredients;
   }
+
+  RecipeModel.fromData(
+      {this.title,
+      this.type,
+      this.preparationText,
+      this.imgUrl,
+      this.ingredients});
 }
