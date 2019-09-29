@@ -1,11 +1,12 @@
 import "dart:async";
 import 'dart:math';
 //import "package:sqljocky5/sqljocky.dart";
+import 'package:cookmergency/src/resources/abstract_recipe_provider.dart';
 import "package:mysql1/mysql1.dart";
 import "../models/ingredient_model.dart";
 import "../models/recipe_model.dart";
 
-class RemoteRecipeProvider {
+class RemoteRecipeProvider extends AbstractRecipeProvider {
   final ConnectionSettings s = ConnectionSettings(
     user: "cookmergency",
     password: "cookmergency",
@@ -16,6 +17,13 @@ class RemoteRecipeProvider {
   MySqlConnection conn;
 
   RemoteRecipeProvider();
+
+  Future<bool> isAvailable() async {
+    conn = await MySqlConnection.connect(s);
+    final Results results = await conn.query("SELECT 1");
+
+    return results.isEmpty ? false : true;
+  }
 
   Future<void> initConnection() async {
     print("peter");
@@ -158,8 +166,12 @@ class RemoteRecipeProvider {
     return false;
   }
 
-  Future<bool> addRecipeToDB(String title, String recipeType,
-      String preperationText, String imageURL) async {
+  Future<bool> addRecipe(RecipeModel recipe) async {
+    String title = recipe.title;
+    String recipeType = recipe.type;
+    String preperationText = recipe.preparationText;
+    String imageUrl = recipe.imgUrl;
+
     if (await containsRecipeTitle(title)) {
       print("Title already exists");
       return false;
@@ -170,7 +182,7 @@ class RemoteRecipeProvider {
       conn = conn ?? await MySqlConnection.connect(s);
       await conn.query(
           "INSERT INTO Recipes (id, recipeTypeName, recipeTitle, preparationText, imageURL) VALUES "
-          "('$id', '$recipeType', '$title', '$preperationText', '$imageURL')");
+          "('$id', '$recipeType', '$title', '$preperationText', '$imageUrl')");
       //await conn.close();
       return true;
     } catch (e) {
@@ -247,4 +259,4 @@ class RemoteRecipeProvider {
   }
 }
 
-final RemoteRecipeProvider remoteRecipeProvider = RemoteRecipeProvider();
+// final AbstractRecipeProvider remoteRecipeProvider = RemoteRecipeProvider();

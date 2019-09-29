@@ -12,19 +12,22 @@ import 'package:moor_flutter/moor_flutter.dart';
 
 part "moor_database.g.dart";
 
-@UseMoor(tables: [
-  Recipes,
-  Ingredients,
-  IngredientTypes,
-  RecipeTypes,
-  IngredientAmounts
-], daos: [
-  RecipeDao,
-  IngredientDao,
-  IngredientTypeDao,
-  RecipeTypeDao,
-  IngredientAmountDao
-])
+@UseMoor(
+  tables: [
+    Recipes,
+    Ingredients,
+    IngredientTypes,
+    RecipeTypes,
+    IngredientAmounts
+  ],
+  daos: [
+    RecipeDao,
+    IngredientDao,
+    IngredientTypeDao,
+    RecipeTypeDao,
+    IngredientAmountDao
+  ],
+)
 class AppDatabase extends _$AppDatabase {
   AppDatabase()
       : super(

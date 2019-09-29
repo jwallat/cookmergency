@@ -1,12 +1,21 @@
 import "dart:async";
 import "../models/ingredient_model.dart";
 import "../models/recipe_model.dart";
+import "../resources/abstract_recipe_provider.dart";
 import "../resources/remote_recipe_provider.dart";
+import "../resources/local_recipe_provider.dart";
 
 class Repository {
   /// Handle item fetching and saving
+  final LocalRecipeProvider localRecipeProvider = LocalRecipeProvider();
+  final RemoteRecipeProvider remoteRecipeProvider = RemoteRecipeProvider();
 
-  Repository();
+  List<AbstractRecipeProvider> providers;
+
+  Repository() {
+    providers.add(localRecipeProvider);
+    providers.add(remoteRecipeProvider);
+  }
 
   Future<void> initRemoteConnection() async {
     print("initDBConnection");
@@ -38,10 +47,18 @@ class Repository {
   Future<bool> addRecipe(
       String title,
       String recipeType,
-      String preperationText,
+      String preparationText,
       String imageURL,
       List<IngredientAmountModel> chosenIngredients) async {
     // should probably await the add functions to ensure correct insertion order
+
+    RecipeModel recipe = RecipeModel.fromData(
+      title: title,
+      type: recipeType,
+      preparationText: preparationText,
+      imgUrl: imageURL,
+      ingredients: chosenIngredients,
+    );
 
     // TODO: Add recipeType
     if (await remoteRecipeProvider.addRecipeType(recipeType)) {
@@ -51,8 +68,7 @@ class Repository {
       return false;
     }
     // TODO: Add recipe
-    if (await remoteRecipeProvider.addRecipeToDB(
-        title, recipeType, preperationText, imageURL)) {
+    if (await remoteRecipeProvider.addRecipe(recipe)) {
       print("recipe-item $title added");
     } else {
       print("Error adding recipe $title");

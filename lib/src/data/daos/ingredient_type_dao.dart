@@ -11,8 +11,8 @@ class IngredientTypeDao extends DatabaseAccessor<AppDatabase>
 
   IngredientTypeDao(this.db) : super(db);
 
-  Future<List<IngredientType>> getAllIngredientTypes() =>
-      select(ingredientTypes).get();
+  Future<List<String>> fetchAllIngredientTypes() =>
+      select(ingredientTypes).get().then((rows) => List.from(rows));
   Future insertIngredientType(Insertable<IngredientType> ingredientType) =>
       into(ingredientTypes).insert(ingredientType);
   Future deleteIngredientType(Insertable<IngredientType> ingredientType) =>

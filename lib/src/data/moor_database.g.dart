@@ -215,7 +215,9 @@ class $RecipesTable extends Recipes with TableInfo<$RecipesTable, Recipe> {
   GeneratedTextColumn get recipeType => _recipeType ??= _constructRecipeType();
   GeneratedTextColumn _constructRecipeType() {
     return GeneratedTextColumn('recipe_type', $tableName, false,
-        minTextLength: 1, maxTextLength: 70);
+        minTextLength: 1,
+        maxTextLength: 70,
+        $customConstraints: 'REFERENCES recipeTypes(name)');
   }
 
   final VerificationMeta _preparationTextMeta =
@@ -330,7 +332,7 @@ class $RecipesTable extends Recipes with TableInfo<$RecipesTable, Recipe> {
   }
 
   @override
-  Set<GeneratedColumn> get $primaryKey => {id};
+  Set<GeneratedColumn> get $primaryKey => {id, title};
   @override
   Recipe map(Map<String, dynamic> data, {String tablePrefix}) {
     final effectivePrefix = tablePrefix != null ? '$tablePrefix.' : null;
@@ -519,7 +521,9 @@ class $IngredientsTable extends Ingredients
       _ingredientType ??= _constructIngredientType();
   GeneratedTextColumn _constructIngredientType() {
     return GeneratedTextColumn('ingredient_type', $tableName, false,
-        minTextLength: 1, maxTextLength: 70);
+        minTextLength: 1,
+        maxTextLength: 70,
+        $customConstraints: 'REFERENCES ingredientTypes(name)');
   }
 
   final VerificationMeta _syncDateMeta = const VerificationMeta('syncDate');
@@ -575,7 +579,7 @@ class $IngredientsTable extends Ingredients
   }
 
   @override
-  Set<GeneratedColumn> get $primaryKey => {id};
+  Set<GeneratedColumn> get $primaryKey => {id, name};
   @override
   Ingredient map(Map<String, dynamic> data, {String tablePrefix}) {
     final effectivePrefix = tablePrefix != null ? '$tablePrefix.' : null;
@@ -771,7 +775,7 @@ class $IngredientTypesTable extends IngredientTypes
   }
 
   @override
-  Set<GeneratedColumn> get $primaryKey => {id};
+  Set<GeneratedColumn> get $primaryKey => {id, name};
   @override
   IngredientType map(Map<String, dynamic> data, {String tablePrefix}) {
     final effectivePrefix = tablePrefix != null ? '$tablePrefix.' : null;
@@ -960,7 +964,7 @@ class $RecipeTypesTable extends RecipeTypes
   }
 
   @override
-  Set<GeneratedColumn> get $primaryKey => {id};
+  Set<GeneratedColumn> get $primaryKey => {id, name};
   @override
   RecipeType map(Map<String, dynamic> data, {String tablePrefix}) {
     final effectivePrefix = tablePrefix != null ? '$tablePrefix.' : null;
@@ -1173,7 +1177,9 @@ class $IngredientAmountsTable extends IngredientAmounts
       _ingredientName ??= _constructIngredientName();
   GeneratedTextColumn _constructIngredientName() {
     return GeneratedTextColumn('ingredient_name', $tableName, false,
-        minTextLength: 1, maxTextLength: 70);
+        minTextLength: 1,
+        maxTextLength: 70,
+        $customConstraints: 'REFERENCES ingredients(name)');
   }
 
   final VerificationMeta _recipeTitleMeta =
@@ -1184,7 +1190,9 @@ class $IngredientAmountsTable extends IngredientAmounts
       _recipeTitle ??= _constructRecipeTitle();
   GeneratedTextColumn _constructRecipeTitle() {
     return GeneratedTextColumn('recipe_title', $tableName, false,
-        minTextLength: 1, maxTextLength: 70);
+        minTextLength: 1,
+        maxTextLength: 70,
+        $customConstraints: 'REFERENCES recipes(title)');
   }
 
   final VerificationMeta _amountMeta = const VerificationMeta('amount');
