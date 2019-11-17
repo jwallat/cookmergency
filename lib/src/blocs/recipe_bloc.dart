@@ -1,16 +1,20 @@
 import "dart:async";
+import 'package:cookmergency/src/models/recipe_id_model.dart';
 import "package:rxdart/rxdart.dart";
+import 'package:tuple/tuple.dart';
 import "../models/recipe_model.dart";
 import "../resources/repository.dart";
 
 class RecipeBloc {
   final Repository repository = Repository();
 
-  final PublishSubject<int> _recipeFetcher = PublishSubject<int>();
-  final BehaviorSubject<Map<int, Future<RecipeModel>>> _recipeOutput =
-      BehaviorSubject<Map<int, Future<RecipeModel>>>();
+  final PublishSubject<RecipeIdModel> _recipeFetcher =
+      PublishSubject<RecipeIdModel>();
+  final BehaviorSubject<Map<RecipeIdModel, Future<RecipeModel>>> _recipeOutput =
+      BehaviorSubject<Map<RecipeIdModel, Future<RecipeModel>>>();
 
-  final BehaviorSubject<List<int>> _recipeIds = BehaviorSubject<List<int>>();
+  final BehaviorSubject<List<RecipeIdModel>> _recipeIds =
+      BehaviorSubject<List<RecipeIdModel>>();
   final ReplaySubject<List<String>> _recipeTypes =
       ReplaySubject<List<String>>();
   final ReplaySubject<List<String>> _ingredientTypes =
@@ -27,27 +31,30 @@ class RecipeBloc {
 
   RecipeBloc() {
     _recipeFetcher.stream
-        .transform<Map<int, Future<RecipeModel>>>(_recipeTransformer())
+        .transform<Map<RecipeIdModel, Future<RecipeModel>>>(
+            _recipeTransformer())
         .pipe(_recipeOutput);
   }
 
   // Getter to the streams
-  Observable<List<int>> get recipeIds => _recipeIds.stream;
-  Observable<Map<int, Future<RecipeModel>>> get recipes => _recipeOutput.stream;
+  Observable<List<RecipeIdModel>> get recipeIds => _recipeIds.stream;
+  Observable<Map<RecipeIdModel, Future<RecipeModel>>> get recipes =>
+      _recipeOutput.stream;
   Observable<List<String>> get recipeTypes => _recipeTypes.stream;
   Observable<List<String>> get ingredientTypes => _ingredientTypes.stream;
   Observable<List<String>> get ingredients => _ingredients.stream;
 
   // Getter to the sinks
-  Function(int) get fetchRecipe => _recipeFetcher.sink.add;
+  Function(RecipeIdModel) get fetchRecipe => _recipeFetcher.sink.add;
 
-  dynamic _recipeTransformer() {
+  dynamic _recipeTransformer() async {
     return ScanStreamTransformer(
-      (Map<int, Future<RecipeModel>> cache, int id, int index) {
-        cache[id] = repository.fetchRecipe(id);
+      (Map<RecipeIdModel, Future<RecipeModel>> cache, RecipeIdModel idModel,
+          int index) {
+        cache[idModel] = repository.fetchRecipe(idModel);
         return cache;
       },
-      <int, Future<RecipeModel>>{},
+      <RecipeIdModel, Future<RecipeModel>>{},
     );
   }
 
@@ -60,16 +67,16 @@ class RecipeBloc {
     _recipeTypesMap.removeWhere((String recipeType, bool chosen) => !chosen);
     final List<String> chosenRecipeTypes = _recipeTypesMap.keys.toList();
 
-    final List<int> recipeIds =
+    final List<RecipeIdModel> recipeIds =
         await repository.fetchRecipeIds(chosenRecipeTypes, chosenIngredients);
 
     _recipeIds.add(recipeIds);
   }
 
   dynamic fetchRecipeTypes() async {
-    recipeTypesList = await repository.fetchRecipeTypes();
+    repository.fetchLocalRecipeTypes().then((data) => _recipeTypes.add(data));
 
-    _recipeTypes.add(recipeTypesList);
+    repository.fetchRemoteRecipeTypes().then((data) => _recipeTypes.add(data));
   }
 
   dynamic connectRemoteDB() {
@@ -77,10 +84,13 @@ class RecipeBloc {
   }
 
   dynamic fetchIngredientTypes() async {
-    final List<String> ingredientTypes =
-        await repository.fetchIngredientTypes();
+    final Tuple2<Future<List<String>>, Future<List<String>>> ingredientTypes =
+        repository.fetchIngredientTypes();
 
-    _ingredientTypes.add(ingredientTypes);
+    // Local data
+    ingredientTypes.item1.then((data) => _recipeTypes.add(data));
+    // Remote data
+    ingredientTypes.item2.then((data) => _recipeTypes.add(data));
   }
 
   dynamic fetchIngredients() async {

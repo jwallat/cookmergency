@@ -1,3 +1,4 @@
+import 'package:cookmergency/src/models/recipe_id_model.dart';
 import "package:flutter/material.dart";
 import "../blocs/recipe_provider.dart";
 import "../widgets/recipe_list_tile.dart";
@@ -33,9 +34,10 @@ class RecipesList extends StatelessWidget {
   }
 
   Widget buildRecipeList(BuildContext context, RecipeBloc bloc) {
-    return StreamBuilder<List<int>>(
+    return StreamBuilder<List<RecipeIdModel>>(
       stream: bloc.recipeIds,
-      builder: (BuildContext context, AsyncSnapshot<List<int>> snapshot) {
+      builder:
+          (BuildContext context, AsyncSnapshot<List<RecipeIdModel>> snapshot) {
         if (!snapshot.hasData) {
           return const Center(
             child: CircularProgressIndicator(),

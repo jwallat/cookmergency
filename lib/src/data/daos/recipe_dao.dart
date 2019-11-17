@@ -13,13 +13,14 @@ class RecipeDao extends DatabaseAccessor<AppDatabase> with _$RecipeDaoMixin {
 
   Future insertRecipe(Insertable<Recipe> recipe) =>
       into(recipes).insert(recipe);
+
   Future updateRecipe(Insertable<Recipe> recipe) =>
       update(recipes).replace(recipe);
   Future deleteRecipe(Insertable<Recipe> recipe) =>
       delete(recipes).delete(recipe);
 
-  Future fetchRecipe(int id) =>
-      (select(recipes)..where((recipe) => recipe.id.equals(id))).get();
+  Future<Recipe> fetchRecipe(int id) =>
+      (select(recipes)..where((recipe) => recipe.id.equals(id))).getSingle();
 
   Future<List<int>> getRecipeIds(
       List<String> chosenRecipeTypes, List<String> chosenIngredients) async {
@@ -40,14 +41,8 @@ class RecipeDao extends DatabaseAccessor<AppDatabase> with _$RecipeDaoMixin {
     }
 
     String query;
-    if (ingredients.isEmpty && recipeTypes.isEmpty) {
-      //TODO: Entscheiden wann alle und wann nur manche gezeigt werden sollen
-      query = "SELECT DISTINCT r.id FROM Recipes r";
-    } else if (recipeTypes.isEmpty && ingredients.isNotEmpty) {
-      query = "SELECT DISTINCT r.id FROM Recipes r";
-    } else if (recipeTypes.isNotEmpty && ingredients.isEmpty) {
-      query = "SELECT DISTINCT r.id FROM Recipes r";
-    } else {
+
+    if (recipeTypes.isNotEmpty && ingredients.isNotEmpty) {
       query = "SELECT DISTINCT r.id FROM IngredientAmounts ia "
           "JOIN Recipes r ON (ia.recipeTitle = r.recipeTitle) WHERE r.recipeTypeName IN ($recipeTypes)"
           "AND ia.recipeTitle NOT IN "
@@ -56,6 +51,8 @@ class RecipeDao extends DatabaseAccessor<AppDatabase> with _$RecipeDaoMixin {
           "FROM IngredientAmounts ib "
           "WHERE ib.ingredientName NOT IN ($ingredients)"
           ")";
+    } else {
+      // Future<List<int>> ids = select(recipes)..map((Recipe r) => r.id).get();
     }
 
     List<QueryRow> rows = await db.customSelect(query);

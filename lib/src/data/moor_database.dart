@@ -2,12 +2,14 @@ import 'package:cookmergency/src/data/daos/ingredient_amount_dao.dart';
 import 'package:cookmergency/src/data/daos/ingredient_dao.dart';
 import 'package:cookmergency/src/data/daos/ingredient_type_dao.dart';
 import 'package:cookmergency/src/data/daos/recipe_dao.dart';
+import 'package:cookmergency/src/data/daos/recipe_ids_dao.dart';
 import 'package:cookmergency/src/data/daos/recipe_type_dao.dart';
 import 'package:cookmergency/src/data/tables/ingredientAmounts.dart';
 import 'package:cookmergency/src/data/tables/ingredientTypes.dart';
 import 'package:cookmergency/src/data/tables/ingredients.dart';
 import 'package:cookmergency/src/data/tables/recipeTypes.dart';
 import 'package:cookmergency/src/data/tables/recipes.dart';
+import 'package:cookmergency/src/data/tables/recipeIds.dart';
 import 'package:moor_flutter/moor_flutter.dart';
 
 part "moor_database.g.dart";
@@ -15,6 +17,7 @@ part "moor_database.g.dart";
 @UseMoor(
   tables: [
     Recipes,
+    RecipeIds,
     Ingredients,
     IngredientTypes,
     RecipeTypes,
@@ -22,6 +25,7 @@ part "moor_database.g.dart";
   ],
   daos: [
     RecipeDao,
+    RecipeIdDao,
     IngredientDao,
     IngredientTypeDao,
     RecipeTypeDao,

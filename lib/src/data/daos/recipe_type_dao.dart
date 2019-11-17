@@ -11,8 +11,7 @@ class RecipeTypeDao extends DatabaseAccessor<AppDatabase>
 
   RecipeTypeDao(this.db) : super(db);
 
-  Future<List<String>> fetchAllRecipeTypes() =>
-      select(recipeTypes).get().then((rows) => List.from(rows));
+  Future<List<RecipeType>> fetchAllRecipeTypes() => select(recipeTypes).get();
   Future insertRecipeType(Insertable<RecipeType> recipeType) =>
       into(recipeTypes).insert(recipeType);
   Future deleteRecipeType(Insertable<RecipeType> recipeType) =>

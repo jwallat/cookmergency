@@ -6,7 +6,7 @@ part of 'moor_database.dart';
 // MoorGenerator
 // **************************************************************************
 
-// ignore_for_file: unnecessary_brace_in_string_interps
+// ignore_for_file: unnecessary_brace_in_string_interps, unnecessary_this
 class Recipe extends DataClass implements Insertable<Recipe> {
   final int id;
   final String title;
@@ -72,7 +72,7 @@ class Recipe extends DataClass implements Insertable<Recipe> {
   }
 
   @override
-  T createCompanion<T extends UpdateCompanion<Recipe>>(bool nullToAbsent) {
+  RecipesCompanion createCompanion(bool nullToAbsent) {
     return RecipesCompanion(
       id: id == null && nullToAbsent ? const Value.absent() : Value(id),
       title:
@@ -92,7 +92,7 @@ class Recipe extends DataClass implements Insertable<Recipe> {
       syncDate: syncDate == null && nullToAbsent
           ? const Value.absent()
           : Value(syncDate),
-    ) as T;
+    );
   }
 
   Recipe copyWith(
@@ -141,13 +141,13 @@ class Recipe extends DataClass implements Insertable<Recipe> {
   bool operator ==(other) =>
       identical(this, other) ||
       (other is Recipe &&
-          other.id == id &&
-          other.title == title &&
-          other.recipeType == recipeType &&
-          other.preparationText == preparationText &&
-          other.imageUrl == imageUrl &&
-          other.preparationTime == preparationTime &&
-          other.syncDate == syncDate);
+          other.id == this.id &&
+          other.title == this.title &&
+          other.recipeType == this.recipeType &&
+          other.preparationText == this.preparationText &&
+          other.imageUrl == this.imageUrl &&
+          other.preparationTime == this.preparationTime &&
+          other.syncDate == this.syncDate);
 }
 
 class RecipesCompanion extends UpdateCompanion<Recipe> {
@@ -167,6 +167,19 @@ class RecipesCompanion extends UpdateCompanion<Recipe> {
     this.preparationTime = const Value.absent(),
     this.syncDate = const Value.absent(),
   });
+  RecipesCompanion.insert({
+    this.id = const Value.absent(),
+    @required String title,
+    @required String recipeType,
+    @required String preparationText,
+    @required String imageUrl,
+    @required String preparationTime,
+    this.syncDate = const Value.absent(),
+  })  : title = Value(title),
+        recipeType = Value(recipeType),
+        preparationText = Value(preparationText),
+        imageUrl = Value(imageUrl),
+        preparationTime = Value(preparationTime);
   RecipesCompanion copyWith(
       {Value<int> id,
       Value<String> title,
@@ -374,6 +387,198 @@ class $RecipesTable extends Recipes with TableInfo<$RecipesTable, Recipe> {
   }
 }
 
+class RecipeId extends DataClass implements Insertable<RecipeId> {
+  final int id;
+  final int remoteId;
+  final int localId;
+  RecipeId({@required this.id, @required this.remoteId, this.localId});
+  factory RecipeId.fromData(Map<String, dynamic> data, GeneratedDatabase db,
+      {String prefix}) {
+    final effectivePrefix = prefix ?? '';
+    final intType = db.typeSystem.forDartType<int>();
+    return RecipeId(
+      id: intType.mapFromDatabaseResponse(data['${effectivePrefix}id']),
+      remoteId:
+          intType.mapFromDatabaseResponse(data['${effectivePrefix}remote_id']),
+      localId:
+          intType.mapFromDatabaseResponse(data['${effectivePrefix}local_id']),
+    );
+  }
+  factory RecipeId.fromJson(Map<String, dynamic> json,
+      {ValueSerializer serializer = const ValueSerializer.defaults()}) {
+    return RecipeId(
+      id: serializer.fromJson<int>(json['id']),
+      remoteId: serializer.fromJson<int>(json['remoteId']),
+      localId: serializer.fromJson<int>(json['localId']),
+    );
+  }
+  @override
+  Map<String, dynamic> toJson(
+      {ValueSerializer serializer = const ValueSerializer.defaults()}) {
+    return {
+      'id': serializer.toJson<int>(id),
+      'remoteId': serializer.toJson<int>(remoteId),
+      'localId': serializer.toJson<int>(localId),
+    };
+  }
+
+  @override
+  RecipeIdsCompanion createCompanion(bool nullToAbsent) {
+    return RecipeIdsCompanion(
+      id: id == null && nullToAbsent ? const Value.absent() : Value(id),
+      remoteId: remoteId == null && nullToAbsent
+          ? const Value.absent()
+          : Value(remoteId),
+      localId: localId == null && nullToAbsent
+          ? const Value.absent()
+          : Value(localId),
+    );
+  }
+
+  RecipeId copyWith({int id, int remoteId, int localId}) => RecipeId(
+        id: id ?? this.id,
+        remoteId: remoteId ?? this.remoteId,
+        localId: localId ?? this.localId,
+      );
+  @override
+  String toString() {
+    return (StringBuffer('RecipeId(')
+          ..write('id: $id, ')
+          ..write('remoteId: $remoteId, ')
+          ..write('localId: $localId')
+          ..write(')'))
+        .toString();
+  }
+
+  @override
+  int get hashCode =>
+      $mrjf($mrjc(id.hashCode, $mrjc(remoteId.hashCode, localId.hashCode)));
+  @override
+  bool operator ==(other) =>
+      identical(this, other) ||
+      (other is RecipeId &&
+          other.id == this.id &&
+          other.remoteId == this.remoteId &&
+          other.localId == this.localId);
+}
+
+class RecipeIdsCompanion extends UpdateCompanion<RecipeId> {
+  final Value<int> id;
+  final Value<int> remoteId;
+  final Value<int> localId;
+  const RecipeIdsCompanion({
+    this.id = const Value.absent(),
+    this.remoteId = const Value.absent(),
+    this.localId = const Value.absent(),
+  });
+  RecipeIdsCompanion.insert({
+    this.id = const Value.absent(),
+    @required int remoteId,
+    this.localId = const Value.absent(),
+  }) : remoteId = Value(remoteId);
+  RecipeIdsCompanion copyWith(
+      {Value<int> id, Value<int> remoteId, Value<int> localId}) {
+    return RecipeIdsCompanion(
+      id: id ?? this.id,
+      remoteId: remoteId ?? this.remoteId,
+      localId: localId ?? this.localId,
+    );
+  }
+}
+
+class $RecipeIdsTable extends RecipeIds
+    with TableInfo<$RecipeIdsTable, RecipeId> {
+  final GeneratedDatabase _db;
+  final String _alias;
+  $RecipeIdsTable(this._db, [this._alias]);
+  final VerificationMeta _idMeta = const VerificationMeta('id');
+  GeneratedIntColumn _id;
+  @override
+  GeneratedIntColumn get id => _id ??= _constructId();
+  GeneratedIntColumn _constructId() {
+    return GeneratedIntColumn('id', $tableName, false,
+        hasAutoIncrement: true, declaredAsPrimaryKey: true);
+  }
+
+  final VerificationMeta _remoteIdMeta = const VerificationMeta('remoteId');
+  GeneratedIntColumn _remoteId;
+  @override
+  GeneratedIntColumn get remoteId => _remoteId ??= _constructRemoteId();
+  GeneratedIntColumn _constructRemoteId() {
+    return GeneratedIntColumn('remote_id', $tableName, false,
+        $customConstraints: 'UNIQUE remoteId');
+  }
+
+  final VerificationMeta _localIdMeta = const VerificationMeta('localId');
+  GeneratedIntColumn _localId;
+  @override
+  GeneratedIntColumn get localId => _localId ??= _constructLocalId();
+  GeneratedIntColumn _constructLocalId() {
+    return GeneratedIntColumn('local_id', $tableName, true,
+        $customConstraints: 'REFERENCES recipes(id)');
+  }
+
+  @override
+  List<GeneratedColumn> get $columns => [id, remoteId, localId];
+  @override
+  $RecipeIdsTable get asDslTable => this;
+  @override
+  String get $tableName => _alias ?? 'recipe_ids';
+  @override
+  final String actualTableName = 'recipe_ids';
+  @override
+  VerificationContext validateIntegrity(RecipeIdsCompanion d,
+      {bool isInserting = false}) {
+    final context = VerificationContext();
+    if (d.id.present) {
+      context.handle(_idMeta, id.isAcceptableValue(d.id.value, _idMeta));
+    } else if (id.isRequired && isInserting) {
+      context.missing(_idMeta);
+    }
+    if (d.remoteId.present) {
+      context.handle(_remoteIdMeta,
+          remoteId.isAcceptableValue(d.remoteId.value, _remoteIdMeta));
+    } else if (remoteId.isRequired && isInserting) {
+      context.missing(_remoteIdMeta);
+    }
+    if (d.localId.present) {
+      context.handle(_localIdMeta,
+          localId.isAcceptableValue(d.localId.value, _localIdMeta));
+    } else if (localId.isRequired && isInserting) {
+      context.missing(_localIdMeta);
+    }
+    return context;
+  }
+
+  @override
+  Set<GeneratedColumn> get $primaryKey => {id};
+  @override
+  RecipeId map(Map<String, dynamic> data, {String tablePrefix}) {
+    final effectivePrefix = tablePrefix != null ? '$tablePrefix.' : null;
+    return RecipeId.fromData(data, _db, prefix: effectivePrefix);
+  }
+
+  @override
+  Map<String, Variable> entityToSql(RecipeIdsCompanion d) {
+    final map = <String, Variable>{};
+    if (d.id.present) {
+      map['id'] = Variable<int, IntType>(d.id.value);
+    }
+    if (d.remoteId.present) {
+      map['remote_id'] = Variable<int, IntType>(d.remoteId.value);
+    }
+    if (d.localId.present) {
+      map['local_id'] = Variable<int, IntType>(d.localId.value);
+    }
+    return map;
+  }
+
+  @override
+  $RecipeIdsTable createAlias(String alias) {
+    return $RecipeIdsTable(_db, alias);
+  }
+}
+
 class Ingredient extends DataClass implements Insertable<Ingredient> {
   final int id;
   final String name;
@@ -420,7 +625,7 @@ class Ingredient extends DataClass implements Insertable<Ingredient> {
   }
 
   @override
-  T createCompanion<T extends UpdateCompanion<Ingredient>>(bool nullToAbsent) {
+  IngredientsCompanion createCompanion(bool nullToAbsent) {
     return IngredientsCompanion(
       id: id == null && nullToAbsent ? const Value.absent() : Value(id),
       name: name == null && nullToAbsent ? const Value.absent() : Value(name),
@@ -430,7 +635,7 @@ class Ingredient extends DataClass implements Insertable<Ingredient> {
       syncDate: syncDate == null && nullToAbsent
           ? const Value.absent()
           : Value(syncDate),
-    ) as T;
+    );
   }
 
   Ingredient copyWith(
@@ -459,10 +664,10 @@ class Ingredient extends DataClass implements Insertable<Ingredient> {
   bool operator ==(other) =>
       identical(this, other) ||
       (other is Ingredient &&
-          other.id == id &&
-          other.name == name &&
-          other.ingredientType == ingredientType &&
-          other.syncDate == syncDate);
+          other.id == this.id &&
+          other.name == this.name &&
+          other.ingredientType == this.ingredientType &&
+          other.syncDate == this.syncDate);
 }
 
 class IngredientsCompanion extends UpdateCompanion<Ingredient> {
@@ -476,6 +681,13 @@ class IngredientsCompanion extends UpdateCompanion<Ingredient> {
     this.ingredientType = const Value.absent(),
     this.syncDate = const Value.absent(),
   });
+  IngredientsCompanion.insert({
+    this.id = const Value.absent(),
+    @required String name,
+    @required String ingredientType,
+    this.syncDate = const Value.absent(),
+  })  : name = Value(name),
+        ingredientType = Value(ingredientType);
   IngredientsCompanion copyWith(
       {Value<int> id,
       Value<String> name,
@@ -649,15 +861,14 @@ class IngredientType extends DataClass implements Insertable<IngredientType> {
   }
 
   @override
-  T createCompanion<T extends UpdateCompanion<IngredientType>>(
-      bool nullToAbsent) {
+  IngredientTypesCompanion createCompanion(bool nullToAbsent) {
     return IngredientTypesCompanion(
       id: id == null && nullToAbsent ? const Value.absent() : Value(id),
       name: name == null && nullToAbsent ? const Value.absent() : Value(name),
       syncDate: syncDate == null && nullToAbsent
           ? const Value.absent()
           : Value(syncDate),
-    ) as T;
+    );
   }
 
   IngredientType copyWith({int id, String name, DateTime syncDate}) =>
@@ -683,9 +894,9 @@ class IngredientType extends DataClass implements Insertable<IngredientType> {
   bool operator ==(other) =>
       identical(this, other) ||
       (other is IngredientType &&
-          other.id == id &&
-          other.name == name &&
-          other.syncDate == syncDate);
+          other.id == this.id &&
+          other.name == this.name &&
+          other.syncDate == this.syncDate);
 }
 
 class IngredientTypesCompanion extends UpdateCompanion<IngredientType> {
@@ -697,6 +908,11 @@ class IngredientTypesCompanion extends UpdateCompanion<IngredientType> {
     this.name = const Value.absent(),
     this.syncDate = const Value.absent(),
   });
+  IngredientTypesCompanion.insert({
+    this.id = const Value.absent(),
+    @required String name,
+    this.syncDate = const Value.absent(),
+  }) : name = Value(name);
   IngredientTypesCompanion copyWith(
       {Value<int> id, Value<String> name, Value<DateTime> syncDate}) {
     return IngredientTypesCompanion(
@@ -840,14 +1056,14 @@ class RecipeType extends DataClass implements Insertable<RecipeType> {
   }
 
   @override
-  T createCompanion<T extends UpdateCompanion<RecipeType>>(bool nullToAbsent) {
+  RecipeTypesCompanion createCompanion(bool nullToAbsent) {
     return RecipeTypesCompanion(
       id: id == null && nullToAbsent ? const Value.absent() : Value(id),
       name: name == null && nullToAbsent ? const Value.absent() : Value(name),
       syncDate: syncDate == null && nullToAbsent
           ? const Value.absent()
           : Value(syncDate),
-    ) as T;
+    );
   }
 
   RecipeType copyWith({int id, String name, DateTime syncDate}) => RecipeType(
@@ -872,9 +1088,9 @@ class RecipeType extends DataClass implements Insertable<RecipeType> {
   bool operator ==(other) =>
       identical(this, other) ||
       (other is RecipeType &&
-          other.id == id &&
-          other.name == name &&
-          other.syncDate == syncDate);
+          other.id == this.id &&
+          other.name == this.name &&
+          other.syncDate == this.syncDate);
 }
 
 class RecipeTypesCompanion extends UpdateCompanion<RecipeType> {
@@ -886,6 +1102,11 @@ class RecipeTypesCompanion extends UpdateCompanion<RecipeType> {
     this.name = const Value.absent(),
     this.syncDate = const Value.absent(),
   });
+  RecipeTypesCompanion.insert({
+    this.id = const Value.absent(),
+    @required String name,
+    this.syncDate = const Value.absent(),
+  }) : name = Value(name);
   RecipeTypesCompanion copyWith(
       {Value<int> id, Value<String> name, Value<DateTime> syncDate}) {
     return RecipeTypesCompanion(
@@ -1052,8 +1273,7 @@ class IngredientAmount extends DataClass
   }
 
   @override
-  T createCompanion<T extends UpdateCompanion<IngredientAmount>>(
-      bool nullToAbsent) {
+  IngredientAmountsCompanion createCompanion(bool nullToAbsent) {
     return IngredientAmountsCompanion(
       id: id == null && nullToAbsent ? const Value.absent() : Value(id),
       ingredientName: ingredientName == null && nullToAbsent
@@ -1070,7 +1290,7 @@ class IngredientAmount extends DataClass
       syncDate: syncDate == null && nullToAbsent
           ? const Value.absent()
           : Value(syncDate),
-    ) as T;
+    );
   }
 
   IngredientAmount copyWith(
@@ -1114,12 +1334,12 @@ class IngredientAmount extends DataClass
   bool operator ==(other) =>
       identical(this, other) ||
       (other is IngredientAmount &&
-          other.id == id &&
-          other.ingredientName == ingredientName &&
-          other.recipeTitle == recipeTitle &&
-          other.amount == amount &&
-          other.amountUnit == amountUnit &&
-          other.syncDate == syncDate);
+          other.id == this.id &&
+          other.ingredientName == this.ingredientName &&
+          other.recipeTitle == this.recipeTitle &&
+          other.amount == this.amount &&
+          other.amountUnit == this.amountUnit &&
+          other.syncDate == this.syncDate);
 }
 
 class IngredientAmountsCompanion extends UpdateCompanion<IngredientAmount> {
@@ -1137,6 +1357,17 @@ class IngredientAmountsCompanion extends UpdateCompanion<IngredientAmount> {
     this.amountUnit = const Value.absent(),
     this.syncDate = const Value.absent(),
   });
+  IngredientAmountsCompanion.insert({
+    this.id = const Value.absent(),
+    @required String ingredientName,
+    @required String recipeTitle,
+    @required int amount,
+    @required String amountUnit,
+    this.syncDate = const Value.absent(),
+  })  : ingredientName = Value(ingredientName),
+        recipeTitle = Value(recipeTitle),
+        amount = Value(amount),
+        amountUnit = Value(amountUnit);
   IngredientAmountsCompanion copyWith(
       {Value<int> id,
       Value<String> ingredientName,
@@ -1321,9 +1552,11 @@ class $IngredientAmountsTable extends IngredientAmounts
 }
 
 abstract class _$AppDatabase extends GeneratedDatabase {
-  _$AppDatabase(QueryExecutor e) : super(const SqlTypeSystem.withDefaults(), e);
+  _$AppDatabase(QueryExecutor e) : super(SqlTypeSystem.defaultInstance, e);
   $RecipesTable _recipes;
   $RecipesTable get recipes => _recipes ??= $RecipesTable(this);
+  $RecipeIdsTable _recipeIds;
+  $RecipeIdsTable get recipeIds => _recipeIds ??= $RecipeIdsTable(this);
   $IngredientsTable _ingredients;
   $IngredientsTable get ingredients => _ingredients ??= $IngredientsTable(this);
   $IngredientTypesTable _ingredientTypes;
@@ -1336,6 +1569,9 @@ abstract class _$AppDatabase extends GeneratedDatabase {
       _ingredientAmounts ??= $IngredientAmountsTable(this);
   RecipeDao _recipeDao;
   RecipeDao get recipeDao => _recipeDao ??= RecipeDao(this as AppDatabase);
+  RecipeIdDao _recipeIdDao;
+  RecipeIdDao get recipeIdDao =>
+      _recipeIdDao ??= RecipeIdDao(this as AppDatabase);
   IngredientDao _ingredientDao;
   IngredientDao get ingredientDao =>
       _ingredientDao ??= IngredientDao(this as AppDatabase);
@@ -1349,6 +1585,12 @@ abstract class _$AppDatabase extends GeneratedDatabase {
   IngredientAmountDao get ingredientAmountDao =>
       _ingredientAmountDao ??= IngredientAmountDao(this as AppDatabase);
   @override
-  List<TableInfo> get allTables =>
-      [recipes, ingredients, ingredientTypes, recipeTypes, ingredientAmounts];
+  List<TableInfo> get allTables => [
+        recipes,
+        recipeIds,
+        ingredients,
+        ingredientTypes,
+        recipeTypes,
+        ingredientAmounts
+      ];
 }
