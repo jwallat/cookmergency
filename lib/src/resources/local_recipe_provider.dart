@@ -35,7 +35,7 @@ class LocalRecipeProvider {
     return recipe;
   }
 
-  dynamic fetchRecipeTypes() async {
+  Future<List<String>> fetchRecipeTypes() async {
     List<String> recipeTypeNames = List();
     (await recipeTypeDao.fetchAllRecipeTypes())
         .forEach((RecipeType r) => recipeTypeNames.add(r.name));

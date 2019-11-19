@@ -74,9 +74,13 @@ class RecipeBloc {
   }
 
   dynamic fetchRecipeTypes() async {
-    repository.fetchLocalRecipeTypes().then((data) => _recipeTypes.add(data));
+    final Tuple2<Future<List<String>>, Future<List<String>>> recipeTypes =
+        repository.fetchRecipeTypes();
 
-    repository.fetchRemoteRecipeTypes().then((data) => _recipeTypes.add(data));
+    // Local data
+    recipeTypes.item1.then((data) => _recipeTypes.add(data));
+    // Remote data
+    recipeTypes.item2.then((data) => _recipeTypes.add(data));
   }
 
   dynamic connectRemoteDB() {
@@ -88,15 +92,19 @@ class RecipeBloc {
         repository.fetchIngredientTypes();
 
     // Local data
-    ingredientTypes.item1.then((data) => _recipeTypes.add(data));
+    ingredientTypes.item1.then((data) => _ingredientTypes.add(data));
     // Remote data
-    ingredientTypes.item2.then((data) => _recipeTypes.add(data));
+    ingredientTypes.item2.then((data) => _ingredientTypes.add(data));
   }
 
   dynamic fetchIngredients() async {
-    ingredientsList = await repository.fetchIngredients();
+    final Tuple2<Future<List<String>>, Future<List<String>>> ingredients =
+        repository.fetchIngredients();
 
-    _ingredients.add(ingredientsList);
+    // Local data
+    ingredients.item1.then((data) => _ingredients.add(data));
+    // Remote data
+    ingredients.item2.then((data) => _ingredients.add(data));
   }
 
   void setSelectedRecipeType(String recipeType, bool value) {

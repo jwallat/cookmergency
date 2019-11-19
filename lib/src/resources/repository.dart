@@ -29,11 +29,11 @@ class Repository {
         remoteRecipeProvider.fetchIngredientTypes());
   }
 
-  Future<List<String>> fetchLocalRecipeTypes() =>
-      localRecipeProvider.fetchRecipeTypes();
-
-  Future<List<String>> fetchRemoteRecipeTypes() =>
-      remoteRecipeProvider.fetchRecipeTypes();
+  Tuple2<Future<List<String>>, Future<List<String>>> fetchRecipeTypes() {
+    return Tuple2<Future<List<String>>, Future<List<String>>>(
+        localRecipeProvider.fetchRecipeTypes(),
+        remoteRecipeProvider.fetchRecipeTypes());
+  }
 
   Future<List<RecipeIdModel>> fetchRecipeIds(
       List<String> chosenRecipeTypes, List<String> chosenIngredients) async {
@@ -71,6 +71,8 @@ class Repository {
     );
 
     return localRecipeProvider.addRecipe(recipe);
+
+    // Add to remote queue
   }
 
   // Future<bool> addRecipe(
