@@ -28,7 +28,7 @@ dependencies:
   direct_select: ^1.0.0
   #sqljocky5: ^2.2.1
   mysql1: ^0.17.0
-  rxdart: ^0.18.0
+  rxdart: ^0.22.6
   autocomplete_textfield: ^1.6.6
   moor_flutter: ^2.0.0
   tuple: ^1.0.3
@@ -36,6 +36,7 @@ dependencies:
 dev_dependencies:
   moor_generator: ^2.0.1
   build_runner:
+  mockito: ^4.1.1
   flutter_test:
     sdk: flutter
 

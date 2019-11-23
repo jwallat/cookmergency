@@ -29,6 +29,15 @@ class LocalRecipeProvider {
     this.ingredientAmountDao = db.ingredientAmountDao;
   }
 
+  LocalRecipeProvider.fromDaos({
+    this.recipeDao,
+    this.recipeIdDao,
+    this.recipeTypeDao,
+    this.ingredientDao,
+    this.ingredientTypeDao,
+    this.ingredientAmountDao,
+  });
+
   dynamic fetchRecipe(int id) async {
     Recipe recipe = await recipeDao.fetchRecipe(id);
 
