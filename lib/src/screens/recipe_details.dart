@@ -1,13 +1,14 @@
 import "dart:async";
+import 'package:cookmergency/src/models/recipe_id_model.dart';
 import "package:flutter/material.dart";
 import "../blocs/recipe_provider.dart";
 import "../models/recipe_model.dart";
 import "../widgets/details_tab_bar.dart";
 
 class RecipeDetails extends StatelessWidget {
-  final int recipeId;
+  final RecipeIdModel recipeIdModel;
 
-  const RecipeDetails({this.recipeId});
+  const RecipeDetails({this.recipeIdModel});
 
   @override
   Widget build(BuildContext context) {
@@ -37,15 +38,15 @@ class RecipeDetails extends StatelessWidget {
 
   Widget buildDetails(RecipeBloc bloc) {
     // retrieve right RecipeModel from bloc with recipeId
-    return StreamBuilder<Map<int, Future<RecipeModel>>>(
+    return StreamBuilder<Map<RecipeIdModel, Future<RecipeModel>>>(
       stream: bloc.recipes,
       builder: (BuildContext context,
-          AsyncSnapshot<Map<int, Future<RecipeModel>>> snapshot) {
+          AsyncSnapshot<Map<RecipeIdModel, Future<RecipeModel>>> snapshot) {
         if (!snapshot.hasData) {
           return Center(child: const CircularProgressIndicator());
         }
 
-        final Future<RecipeModel> recipeFuture = snapshot.data[recipeId];
+        final Future<RecipeModel> recipeFuture = snapshot.data[recipeIdModel];
 
         return FutureBuilder<RecipeModel>(
           future: recipeFuture,

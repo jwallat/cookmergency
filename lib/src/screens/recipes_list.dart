@@ -51,7 +51,7 @@ class RecipesList extends StatelessWidget {
               bloc.fetchRecipe(snapshot.data[index]);
 
               return RecipeListTile(
-                recipeId: snapshot.data[index],
+                recipeIdModel: snapshot.data[index],
               );
             },
           ),

@@ -1,28 +1,29 @@
 import "dart:async";
+import 'package:cookmergency/src/models/recipe_id_model.dart';
 import "package:flutter/material.dart";
 import "../blocs/recipe_provider.dart";
 import "../models/recipe_model.dart";
 import "../widgets/loading_container.dart";
 
 class RecipeListTile extends StatelessWidget {
-  final int recipeId;
+  final RecipeIdModel recipeIdModel;
 
-  const RecipeListTile({this.recipeId});
+  const RecipeListTile({this.recipeIdModel});
 
   @override
   Widget build(BuildContext context) {
     final RecipeBloc bloc = RecipeProvider.of(context);
 
-    return StreamBuilder<Map<int, Future<RecipeModel>>>(
+    return StreamBuilder<Map<RecipeIdModel, Future<RecipeModel>>>(
       stream: bloc.recipes,
       builder: (BuildContext context,
-          AsyncSnapshot<Map<int, Future<RecipeModel>>> snapshot) {
+          AsyncSnapshot<Map<RecipeIdModel, Future<RecipeModel>>> snapshot) {
         if (!snapshot.hasData) {
           return LoadingContainer();
         }
 
         return FutureBuilder<RecipeModel>(
-            future: snapshot.data[recipeId],
+            future: snapshot.data[recipeIdModel],
             builder: (BuildContext context,
                 AsyncSnapshot<RecipeModel> recipeSnapshot) {
               if (!recipeSnapshot.hasData) {
@@ -49,7 +50,8 @@ class RecipeListTile extends StatelessWidget {
           ),
           borderRadius: const BorderRadius.all(Radius.circular(3.0)),
         ),
-        onTap: () => Navigator.pushNamed(context, "/${recipe.id}"),
+        onTap: () =>
+            Navigator.pushNamed(context, "/${recipe.idModel.toString()}"),
       ),
     );
   }
