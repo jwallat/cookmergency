@@ -1,3 +1,4 @@
+import 'package:cookmergency/src/models/recipe_id_model.dart';
 import "package:flutter/material.dart";
 import "blocs/recipe_provider.dart";
 import "blocs/validation_provider.dart";
@@ -60,12 +61,13 @@ class App extends StatelessWidget {
       return MaterialPageRoute<dynamic>(
         builder: (BuildContext context) {
           final RecipeBloc recipeBloc = RecipeProvider.of(context);
-          final int recipeId = int.parse(settings.name.replaceFirst("/", ""));
+          final RecipeIdModel recipeIdModel =
+              RecipeIdModel.fromString(settings.name.replaceFirst("/", ""));
 
-          recipeBloc.fetchRecipe(recipeId);
+          recipeBloc.fetchRecipe(recipeIdModel);
 
           return RecipeDetails(
-            recipeId: recipeId,
+            recipeIdModel: recipeIdModel,
           );
         },
       );
