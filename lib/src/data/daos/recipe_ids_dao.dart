@@ -1,5 +1,5 @@
 import 'package:cookmergency/src/data/tables/recipeIds.dart';
-import 'package:moor_flutter/moor_flutter.dart';
+import 'package:moor/moor.dart';
 import '../moor_database.dart';
 
 part 'recipe_ids_dao.g.dart';

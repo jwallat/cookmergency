@@ -1,4 +1,4 @@
-import 'package:moor_flutter/moor_flutter.dart';
+import 'package:moor/moor.dart';
 
 // part 'moor_database.g.dart';
 
@@ -9,4 +9,7 @@ class RecipeTypes extends Table {
 
   @override
   Set<Column> get primaryKey => {id, name};
+
+  @override
+  List<String> get customConstraints => ['UNIQUE (name)'];
 }

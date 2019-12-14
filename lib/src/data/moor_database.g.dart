@@ -505,8 +505,11 @@ class $RecipeIdsTable extends RecipeIds
   @override
   GeneratedIntColumn get remoteId => _remoteId ??= _constructRemoteId();
   GeneratedIntColumn _constructRemoteId() {
-    return GeneratedIntColumn('remote_id', $tableName, false,
-        $customConstraints: 'UNIQUE remoteId');
+    return GeneratedIntColumn(
+      'remote_id',
+      $tableName,
+      false,
+    );
   }
 
   final VerificationMeta _localIdMeta = const VerificationMeta('localId');

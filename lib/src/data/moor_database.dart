@@ -10,7 +10,7 @@ import 'package:cookmergency/src/data/tables/ingredients.dart';
 import 'package:cookmergency/src/data/tables/recipeTypes.dart';
 import 'package:cookmergency/src/data/tables/recipes.dart';
 import 'package:cookmergency/src/data/tables/recipeIds.dart';
-import 'package:moor_flutter/moor_flutter.dart';
+import 'package:moor/moor.dart';
 
 part "moor_database.g.dart";
 
@@ -33,12 +33,21 @@ part "moor_database.g.dart";
   ],
 )
 class AppDatabase extends _$AppDatabase {
-  AppDatabase()
-      : super(
-          FlutterQueryExecutor.inDatabaseFolder(
-              path: "db.sqlite", logStatements: false),
-        );
+  // AppDatabase()
+  //     : super(
+  //         FlutterQueryExecutor.inDatabaseFolder(
+  //             path: "db.sqlite", logStatements: false),
+  //       );
+
+  AppDatabase(QueryExecutor e) : super(e);
 
   @override
   int get schemaVersion => 1;
+
+  @override
+  MigrationStrategy get migration => MigrationStrategy(
+        beforeOpen: (db) async {
+          await customStatement('PRAGMA foreign_keys = ON');
+        },
+      );
 }
