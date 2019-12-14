@@ -1,3 +1,4 @@
+import 'package:cookmergency/src/data/moor_database.dart';
 import "package:mysql1/mysql1.dart";
 
 class IngredientAmountModel {
@@ -15,5 +16,16 @@ class IngredientAmountModel {
     unit = row[4];
   }
 
+  IngredientAmountModel.fromLocalDB(IngredientAmount ia) {
+    id = ia.id;
+    ingredientName = ia.ingredientName;
+    recipeTitle = ia.recipeTitle;
+    amount = ia.amount.toString();
+    unit = ia.amountUnit;
+  }
+
   IngredientAmountModel.fromNothing() {}
+
+  IngredientAmountModel.fromValues(
+      {this.id, this.ingredientName, this.recipeTitle, this.amount, this.unit});
 }
