@@ -26,9 +26,9 @@ class RemoteRecipeProvider {
   Future<List<RecipeIdModel>> fetchRecipeIds(
       List<String> chosenRecipeTypes, List<String> chosenIngredients) async {
     // TODO: Query Server over here
-    List<int> remoteIds = <int>[];
+    //List<int> remoteIds = <int>[];
 
-    return remoteIds.map((int id) => RecipeIdModel.fromRemoteId(id));
+    return null;
   }
 
   Future<bool> addRecipeType(String recipeType) async {

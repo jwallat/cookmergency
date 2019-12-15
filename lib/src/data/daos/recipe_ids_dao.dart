@@ -11,12 +11,14 @@ class RecipeIdDao extends DatabaseAccessor<AppDatabase>
 
   RecipeIdDao(this.db) : super(db);
 
-  Future insertRemoteId(Insertable<RecipeId> recipeId) =>
+  Future insertId(Insertable<RecipeId> recipeId) =>
       into(recipeIds).insert(recipeId);
 
-  Future updateWithLocalId(Insertable<RecipeId> recipeId) =>
+  Future updateId(Insertable<RecipeId> recipeId) =>
       update(recipeIds).replace(recipeId);
 
-  Future insertLocalId(Insertable<RecipeId> recipeId) =>
-      into(recipeIds).insert(recipeId);
+  Future deleteId(Insertable<RecipeId> recipeId) =>
+      delete(recipeIds).delete(recipeId);
+
+  Future<List<RecipeId>> fetchAllRecipeIds() => select(recipeIds).get();
 }

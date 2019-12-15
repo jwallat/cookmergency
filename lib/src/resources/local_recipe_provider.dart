@@ -12,7 +12,10 @@ import 'package:moor_flutter/moor_flutter.dart';
 import "../models/recipe_model.dart";
 
 class LocalRecipeProvider {
-  final db = AppDatabase();
+  final db = AppDatabase(
+    FlutterQueryExecutor.inDatabaseFolder(
+        path: "db.sqlite", logStatements: false),
+  );
   RecipeDao recipeDao;
   RecipeIdDao recipeIdDao;
   RecipeTypeDao recipeTypeDao;
@@ -38,10 +41,16 @@ class LocalRecipeProvider {
     this.ingredientAmountDao,
   });
 
-  dynamic fetchRecipe(int id) async {
+  Future<RecipeModel> fetchRecipe(int id) async {
     Recipe recipe = await recipeDao.fetchRecipe(id);
+    List<IngredientAmount> ias = await ingredientAmountDao
+        .getAllIngredientAmountsForRecipe(recipe.title);
+    List<IngredientAmountModel> iaModels = List();
+    for (IngredientAmount ia in ias) {
+      iaModels.add(IngredientAmountModel.fromLocalDB(ia));
+    }
 
-    return recipe;
+    return RecipeModel.fromLocalDb(recipe, iaModels);
   }
 
   Future<List<String>> fetchRecipeTypes() async {
@@ -63,10 +72,11 @@ class LocalRecipeProvider {
   Future<List<RecipeIdModel>> fetchRecipeIds(
       List<String> chosenRecipeTypes, List<String> chosenIngredients) async {
     List<int> localIds =
-        await recipeDao.getRecipeIds(chosenRecipeTypes, chosenIngredients);
+        await recipeDao.fetchRecipeIds(chosenRecipeTypes, chosenIngredients);
 
-    List<RecipeIdModel> ids;
-    localIds.forEach((int id) => ids.add(RecipeIdModel.fromLocalId(id)));
+    List<RecipeIdModel> ids = List();
+    localIds
+        .forEach((int id) => ids.add(RecipeIdModel.fromLocalId(localId: id)));
 
     return ids;
   }
@@ -86,9 +96,9 @@ class LocalRecipeProvider {
   //   return true;
   // }
 
-  Future<bool> addRecipeType(String recipeType) async {
-    return false;
-  }
+  // Future<bool> addRecipeType(String recipeType) async {
+  //   return false;
+  // }
 
   Future<bool> addRecipe(RecipeModel recipe) async {
     recipeTypeDao.insertRecipeType(RecipeTypesCompanion(

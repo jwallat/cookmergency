@@ -30,6 +30,7 @@ class RecipeBloc {
   List<String> unitsList = <String>[];
 
   RecipeBloc() {
+    print("Peter");
     _recipeFetcher.stream
         .transform<Map<RecipeIdModel, Future<RecipeModel>>>(
             _recipeTransformer())
@@ -47,7 +48,7 @@ class RecipeBloc {
   // Getter to the sinks
   Function(RecipeIdModel) get fetchRecipe => _recipeFetcher.sink.add;
 
-  dynamic _recipeTransformer() async {
+  dynamic _recipeTransformer() {
     return ScanStreamTransformer(
       (Map<RecipeIdModel, Future<RecipeModel>> cache, RecipeIdModel idModel,
           int index) {

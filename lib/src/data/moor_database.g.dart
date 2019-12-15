@@ -230,7 +230,7 @@ class $RecipesTable extends Recipes with TableInfo<$RecipesTable, Recipe> {
     return GeneratedTextColumn('recipe_type', $tableName, false,
         minTextLength: 1,
         maxTextLength: 70,
-        $customConstraints: 'REFERENCES recipeTypes(name)');
+        $customConstraints: 'REFERENCES recipe_types(name)');
   }
 
   final VerificationMeta _preparationTextMeta =
@@ -391,7 +391,7 @@ class RecipeId extends DataClass implements Insertable<RecipeId> {
   final int id;
   final int remoteId;
   final int localId;
-  RecipeId({@required this.id, @required this.remoteId, this.localId});
+  RecipeId({@required this.id, this.remoteId, this.localId});
   factory RecipeId.fromData(Map<String, dynamic> data, GeneratedDatabase db,
       {String prefix}) {
     final effectivePrefix = prefix ?? '';
@@ -473,9 +473,9 @@ class RecipeIdsCompanion extends UpdateCompanion<RecipeId> {
   });
   RecipeIdsCompanion.insert({
     this.id = const Value.absent(),
-    @required int remoteId,
+    this.remoteId = const Value.absent(),
     this.localId = const Value.absent(),
-  }) : remoteId = Value(remoteId);
+  });
   RecipeIdsCompanion copyWith(
       {Value<int> id, Value<int> remoteId, Value<int> localId}) {
     return RecipeIdsCompanion(
@@ -508,7 +508,7 @@ class $RecipeIdsTable extends RecipeIds
     return GeneratedIntColumn(
       'remote_id',
       $tableName,
-      false,
+      true,
     );
   }
 
