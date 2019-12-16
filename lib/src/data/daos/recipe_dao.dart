@@ -15,10 +15,9 @@ class RecipeDao extends DatabaseAccessor<AppDatabase> with _$RecipeDaoMixin {
   Future insertRecipe(Insertable<Recipe> recipe) =>
       into(recipes).insert(recipe);
 
-  Future updateRecipe(Insertable<Recipe> recipe) =>
-      update(recipes).replace(recipe);
-  Future deleteRecipe(Insertable<Recipe> recipe) =>
-      delete(recipes).delete(recipe);
+  Future deleteRecipe(Insertable<Recipe> recipe) {
+    return delete(recipes).delete(recipe);
+  }
 
   Future<Recipe> fetchRecipe(int id) =>
       (select(recipes)..where((recipe) => recipe.id.equals(id))).getSingle();

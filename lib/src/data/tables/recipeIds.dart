@@ -2,8 +2,7 @@ import 'package:moor/moor.dart';
 
 class RecipeIds extends Table {
   IntColumn get id => integer().autoIncrement()();
-  IntColumn get remoteId =>
-      integer().nullable()(); //.customConstraint('UNIQUE remoteId')();
+  IntColumn get remoteId => integer().nullable()();
   IntColumn get localId =>
       integer().customConstraint('REFERENCES recipes(id)').nullable()();
 

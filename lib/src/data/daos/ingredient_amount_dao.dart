@@ -16,9 +16,12 @@ class IngredientAmountDao extends DatabaseAccessor<AppDatabase>
       (select(ingredientAmounts)
             ..where((ia) => ia.recipeTitle.equals(recipeTitle)))
           .get();
+
   Future insertIngredientAmount(
           Insertable<IngredientAmount> ingredientAmount) =>
       into(ingredientAmounts).insert(ingredientAmount);
-  Future deleteRecipeType(Insertable<IngredientAmount> ingredientAmount) =>
+
+  Future deleteIngredientAmount(
+          Insertable<IngredientAmount> ingredientAmount) =>
       delete(ingredientAmounts).delete(ingredientAmount);
 }

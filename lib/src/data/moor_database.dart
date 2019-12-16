@@ -33,12 +33,6 @@ part "moor_database.g.dart";
   ],
 )
 class AppDatabase extends _$AppDatabase {
-  // AppDatabase()
-  //     : super(
-  //         FlutterQueryExecutor.inDatabaseFolder(
-  //             path: "db.sqlite", logStatements: false),
-  //       );
-
   AppDatabase(QueryExecutor e) : super(e);
 
   @override

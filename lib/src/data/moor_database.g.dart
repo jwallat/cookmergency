@@ -230,7 +230,7 @@ class $RecipesTable extends Recipes with TableInfo<$RecipesTable, Recipe> {
     return GeneratedTextColumn('recipe_type', $tableName, false,
         minTextLength: 1,
         maxTextLength: 70,
-        $customConstraints: 'REFERENCES recipe_types(name)');
+        $customConstraints: 'REFERENCES recipe_types(name) ON UPDATE CASCADE');
   }
 
   final VerificationMeta _preparationTextMeta =
@@ -738,7 +738,8 @@ class $IngredientsTable extends Ingredients
     return GeneratedTextColumn('ingredient_type', $tableName, false,
         minTextLength: 1,
         maxTextLength: 70,
-        $customConstraints: 'REFERENCES ingredientTypes(name)');
+        $customConstraints:
+            'REFERENCES ingredient_types(name) ON UPDATE CASCADE');
   }
 
   final VerificationMeta _syncDateMeta = const VerificationMeta('syncDate');
@@ -1413,7 +1414,7 @@ class $IngredientAmountsTable extends IngredientAmounts
     return GeneratedTextColumn('ingredient_name', $tableName, false,
         minTextLength: 1,
         maxTextLength: 70,
-        $customConstraints: 'REFERENCES ingredients(name)');
+        $customConstraints: 'REFERENCES ingredients(name) ON UPDATE CASCADE');
   }
 
   final VerificationMeta _recipeTitleMeta =
@@ -1426,7 +1427,7 @@ class $IngredientAmountsTable extends IngredientAmounts
     return GeneratedTextColumn('recipe_title', $tableName, false,
         minTextLength: 1,
         maxTextLength: 70,
-        $customConstraints: 'REFERENCES recipes(title)');
+        $customConstraints: 'REFERENCES recipes(title) ON DELETE CASCADE');
   }
 
   final VerificationMeta _amountMeta = const VerificationMeta('amount');
@@ -1516,7 +1517,7 @@ class $IngredientAmountsTable extends IngredientAmounts
   }
 
   @override
-  Set<GeneratedColumn> get $primaryKey => {id};
+  Set<GeneratedColumn> get $primaryKey => {id, recipeTitle, ingredientName};
   @override
   IngredientAmount map(Map<String, dynamic> data, {String tablePrefix}) {
     final effectivePrefix = tablePrefix != null ? '$tablePrefix.' : null;

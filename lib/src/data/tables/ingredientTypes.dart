@@ -9,4 +9,7 @@ class IngredientTypes extends Table {
 
   @override
   Set<Column> get primaryKey => {id, name};
+
+  @override
+  List<String> get customConstraints => ['UNIQUE (name)'];
 }

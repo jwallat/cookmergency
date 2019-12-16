@@ -28,7 +28,7 @@ void main() {
   test('UNIQUE constraint test - duplicate recipeTypes produce an error',
       () async {
     RecipeTypeDao recipeTypeDao = RecipeTypeDao(database);
-    final id = await recipeTypeDao
+    await recipeTypeDao
         .insertRecipeType(RecipeTypesCompanion(name: Value("type_constraint")));
 
     expect(

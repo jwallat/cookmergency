@@ -5,7 +5,7 @@ class Recipes extends Table {
   TextColumn get title => text().withLength(min: 1, max: 70)();
   TextColumn get recipeType => text()
       .withLength(min: 1, max: 70)
-      .customConstraint('REFERENCES recipe_types(name)')();
+      .customConstraint('REFERENCES recipe_types(name) ON UPDATE CASCADE')();
   TextColumn get preparationText => text().withLength(min: 1, max: 10000)();
   TextColumn get imageUrl => text().withLength(min: 1, max: 270)();
   TextColumn get preparationTime => text().withLength(min: 1, max: 70)();
@@ -13,4 +13,7 @@ class Recipes extends Table {
 
   @override
   Set<Column> get primaryKey => {id, title};
+
+  @override
+  List<String> get customConstraints => ['UNIQUE (title)'];
 }

@@ -12,7 +12,7 @@ class IngredientTypeDao extends DatabaseAccessor<AppDatabase>
   IngredientTypeDao(this.db) : super(db);
 
   Future<List<String>> fetchAllIngredientTypes() =>
-      select(ingredientTypes).get().then((rows) => List.from(rows));
+      select(ingredientTypes).map((type) => type.name).get();
   Future insertIngredientType(Insertable<IngredientType> ingredientType) =>
       into(ingredientTypes).insert(ingredientType);
   Future deleteIngredientType(Insertable<IngredientType> ingredientType) =>
