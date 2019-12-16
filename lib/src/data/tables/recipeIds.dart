@@ -11,5 +11,8 @@ class RecipeIds extends Table {
   Set<Column> get primaryKey => {id};
 
   @override
-  List<String> get customConstraints => ['UNIQUE (remote_Id, local_id)'];
+  List<String> get customConstraints => [
+        'UNIQUE (remote_id) ON CONFLICT ABORT',
+        'UNIQUE (local_id) ON CONFLICT ABORT'
+      ];
 }

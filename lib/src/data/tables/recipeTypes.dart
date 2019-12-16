@@ -11,5 +11,5 @@ class RecipeTypes extends Table {
   Set<Column> get primaryKey => {id, name};
 
   @override
-  List<String> get customConstraints => ['UNIQUE (name)'];
+  List<String> get customConstraints => ['UNIQUE (name) ON CONFLICT FAIL'];
 }

@@ -40,6 +40,9 @@ void main() {
   test('remoteId has a unique constraint', () async {
     await recipeIdDao.insertId(RecipeIdsCompanion(remoteId: Value(0)));
 
+    List<RecipeId> ids = await recipeIdDao.fetchAllRecipeIds();
+    print(ids);
+
     expect(
         () async =>
             await recipeIdDao.insertId(RecipeIdsCompanion(remoteId: Value(0))),
@@ -50,7 +53,7 @@ void main() {
     // Throws exception if no matching recipe is in db
     expect(
         () async =>
-            await recipeIdDao.insertId(RecipeIdsCompanion(remoteId: Value(0))),
+            await recipeIdDao.insertId(RecipeIdsCompanion(localId: Value(0))),
         throwsA(isA<SqliteException>()));
   });
 
