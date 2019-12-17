@@ -30,7 +30,6 @@ class RecipeBloc {
   List<String> unitsList = <String>[];
 
   RecipeBloc() {
-    print("Peter");
     _recipeFetcher.stream
         .transform<Map<RecipeIdModel, Future<RecipeModel>>>(
             _recipeTransformer())

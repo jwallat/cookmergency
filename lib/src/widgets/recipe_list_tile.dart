@@ -1,5 +1,6 @@
 import "dart:async";
 import 'package:cookmergency/src/models/recipe_id_model.dart';
+import 'package:cookmergency/src/widgets/failback_image.dart';
 import "package:flutter/material.dart";
 import "../blocs/recipe_provider.dart";
 import "../models/recipe_model.dart";
@@ -42,7 +43,7 @@ class RecipeListTile extends StatelessWidget {
         title: Text(recipe.title),
         subtitle: const Text("Maybe score on a later date"),
         leading: ClipRRect(
-          child: Image.network(
+          child: FailbackImage(
             recipe.imgUrl,
             height: 90,
             width: 90,

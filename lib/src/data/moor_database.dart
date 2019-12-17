@@ -39,12 +39,15 @@ class AppDatabase extends _$AppDatabase {
   int get schemaVersion => 1;
 
   @override
-  MigrationStrategy get migration => MigrationStrategy(beforeOpen: (db) async {
-        await customStatement('PRAGMA foreign_keys = ON');
-      }, onCreate: (db) async {
-        // Add a default ingredient type as they are inherently needed but not currently used
-        IngredientTypeDao itDao = IngredientTypeDao(this);
-        itDao.insertIngredientType(
-            IngredientTypesCompanion(name: Value("<<placeholder>>")));
-      });
+  MigrationStrategy get migration => MigrationStrategy(
+        beforeOpen: (db) async {
+          await customStatement('PRAGMA foreign_keys = ON');
+        },
+        onCreate: (db) async {
+          // Add a default ingredient type as they are inherently needed but not currently used
+          IngredientTypeDao itDao = IngredientTypeDao(this);
+          itDao.insertIngredientType(
+              IngredientTypesCompanion(name: Value("<<placeholder>>")));
+        },
+      );
 }

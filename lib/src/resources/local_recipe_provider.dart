@@ -12,10 +12,7 @@ import 'package:moor_flutter/moor_flutter.dart';
 import "../models/recipe_model.dart";
 
 class LocalRecipeProvider {
-  final db = AppDatabase(
-    FlutterQueryExecutor.inDatabaseFolder(
-        path: "db.sqlite", logStatements: false),
-  );
+  AppDatabase db;
   RecipeDao recipeDao;
   RecipeIdDao recipeIdDao;
   RecipeTypeDao recipeTypeDao;
@@ -24,6 +21,10 @@ class LocalRecipeProvider {
   IngredientAmountDao ingredientAmountDao;
 
   LocalRecipeProvider() {
+    this.db = AppDatabase(
+      FlutterQueryExecutor.inDatabaseFolder(
+          path: "db.sqlite", logStatements: true),
+    );
     this.recipeDao = db.recipeDao;
     this.recipeIdDao = db.recipeIdDao;
     this.recipeTypeDao = db.recipeTypeDao;
