@@ -80,8 +80,10 @@ class RecipeBloc {
 
     // Local data
     recipeTypes.item1.then((data) => _recipeTypes.add(data));
+    addAllIfAbsent(recipeTypesList, await recipeTypes.item1);
     // Remote data
     recipeTypes.item2.then((data) => _recipeTypes.add(data));
+    addAllIfAbsent(recipeTypesList, await recipeTypes.item2);
   }
 
   dynamic connectRemoteDB() {
@@ -104,8 +106,10 @@ class RecipeBloc {
 
     // Local data
     ingredients.item1.then((data) => _ingredients.add(data));
+    addAllIfAbsent(ingredientsList, await ingredients.item1);
     // Remote data
     ingredients.item2.then((data) => _ingredients.add(data));
+    addAllIfAbsent(ingredientsList, await ingredients.item2);
   }
 
   void setSelectedRecipeType(String recipeType, bool value) {
@@ -126,6 +130,14 @@ class RecipeBloc {
 
   void setSelectedIngredient(String ingredient, bool value) {
     _ingredientsMap[ingredient] = value;
+  }
+
+  void addAllIfAbsent(List<String> list, List<String> values) {
+    for (String val in values) {
+      if (!list.contains(val)) {
+        list.add(val);
+      }
+    }
   }
 
   void dispose() {

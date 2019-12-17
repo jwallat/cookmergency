@@ -74,7 +74,7 @@ class LocalRecipeProvider {
     List<int> localIds =
         await recipeDao.fetchRecipeIds(chosenRecipeTypes, chosenIngredients);
 
-    List<RecipeIdModel> ids = List();
+    List<RecipeIdModel> ids = [];
     localIds
         .forEach((int id) => ids.add(RecipeIdModel.fromLocalId(localId: id)));
 
@@ -101,36 +101,83 @@ class LocalRecipeProvider {
   // }
 
   Future<bool> addRecipe(RecipeModel recipe) async {
-    recipeTypeDao.insertRecipeType(RecipeTypesCompanion(
-      name: Value(recipe.type),
-    ));
+    try {
+      // all things should be catched internally and only delegated if something fatal happend and we need to rollback
+      insertRecipeType(recipe.type);
 
-    recipeDao.insertRecipe(RecipesCompanion(
-      title: Value(recipe.title),
-      recipeType: Value(recipe.type),
-      imageUrl: Value(recipe.imgUrl),
-      preparationText: Value(recipe.preparationText),
-      preparationTime: Value(recipe.preparationTimeInMinutes.toString()),
-    ));
-
-    for (IngredientAmountModel ingredientAmount in recipe.ingredients) {
-      ingredientTypeDao.insertIngredientType(IngredientTypesCompanion(
-        name: Value("<<placeholder>>"),
+      recipeDao.insertRecipe(RecipesCompanion(
+        title: Value(recipe.title),
+        recipeType: Value(recipe.type),
+        imageUrl: Value(recipe.imgUrl),
+        preparationText: Value(recipe.preparationText),
+        preparationTime: Value(recipe.preparationTimeInMinutes.toString()),
       ));
 
-      ingredientDao.insertIngredient(IngredientsCompanion(
-        name: Value(ingredientAmount.ingredientName),
-        ingredientType: Value("<<placeholder>>"),
-      ));
+      for (IngredientAmountModel ingredientAmount in recipe.ingredients) {
+        insertIngredientType("<<placeholder>>");
 
-      ingredientAmountDao.insertIngredientAmount(IngredientAmountsCompanion(
-        recipeTitle: Value(recipe.title),
-        ingredientName: Value(ingredientAmount.ingredientName),
-        amount: Value(int.parse(ingredientAmount.amount)),
-        amountUnit: Value(ingredientAmount.unit),
+        insertIngredient(ingredientAmount.ingredientName, "<<placeholder>>");
+
+        ingredientAmountDao.insertIngredientAmount(IngredientAmountsCompanion(
+          recipeTitle: Value(recipe.title),
+          ingredientName: Value(ingredientAmount.ingredientName),
+          amount: Value(int.parse(ingredientAmount.amount)),
+          amountUnit: Value(ingredientAmount.unit),
+        ));
+      }
+    } catch (e, trace) {
+      // catch different exepction
+      print(
+          "A fatal error occured during LocalRecipeProvider.addRecipe. Changes will be reversed: $trace");
+      recipeDao.deleteRecipe(RecipesCompanion(
+        title: Value(recipe.title),
+        recipeType: Value(recipe.type),
+        imageUrl: Value(recipe.imgUrl),
+        preparationText: Value(recipe.preparationText),
+        preparationTime: Value(recipe.preparationTimeInMinutes.toString()),
       ));
     }
 
     return true;
+  }
+
+  void insertIngredientType(String ingredientType) async {
+    try {
+      if (!await ingredientTypeDao.containsIngredientType(ingredientType))
+        await ingredientTypeDao.insertIngredientType(IngredientTypesCompanion(
+          name: Value(ingredientType),
+        ));
+    } catch (e, trace) {
+      print(trace);
+      throw e;
+    }
+  }
+
+  void insertRecipeType(String recipeType) async {
+    try {
+      if (!await recipeTypeDao.containsRecipeType(recipeType)) {
+        recipeTypeDao.insertRecipeType(RecipeTypesCompanion(
+          name: Value(recipeType),
+        ));
+      }
+    } catch (e, trace) {
+      print(trace);
+      throw e;
+    }
+  }
+
+  void insertIngredient(String ingredientName, String ingredientType) async {
+    try {
+      if (!await ingredientDao.containsIngredient(
+          ingredientName, ingredientType)) {
+        ingredientDao.insertIngredient(IngredientsCompanion(
+          name: Value(ingredientName),
+          ingredientType: Value(ingredientType),
+        ));
+      }
+    } catch (e, trace) {
+      print(trace);
+      throw e;
+    }
   }
 }

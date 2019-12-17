@@ -51,7 +51,7 @@ class RecipeListTile extends StatelessWidget {
           borderRadius: const BorderRadius.all(Radius.circular(3.0)),
         ),
         onTap: () =>
-            Navigator.pushNamed(context, "/${recipe.idModel.toString()}"),
+            Navigator.pushNamed(context, "/${recipe.idModel.modelAsString()}"),
       ),
     );
   }

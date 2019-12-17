@@ -76,6 +76,7 @@ class AddRecipeState extends State<AddRecipe> {
 
   Widget recipeTypeField(ValidationBloc validationBloc, RecipeBloc recipeBloc) {
     final List<String> recipeTypeSuggestions = recipeBloc.recipeTypesList;
+    print(recipeTypeSuggestions);
 
     return SimpleAutoCompleteTextField(
       key: key,
@@ -163,6 +164,7 @@ class AddRecipeState extends State<AddRecipe> {
   Widget ingredientsAdder(
       RecipeBloc recipeBloc, AsyncSnapshot<dynamic> snapshot) {
     final List<String> ingredientsSuggestions = recipeBloc.ingredientsList;
+    print(ingredientsSuggestions);
     // TODO: add real unit suggestions from db
     final List<String> unitSuggestions = ["g", "kg", "Stk."];
 

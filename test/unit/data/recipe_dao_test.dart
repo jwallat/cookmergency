@@ -1,3 +1,6 @@
+import 'package:cookmergency/src/data/daos/ingredient_amount_dao.dart';
+import 'package:cookmergency/src/data/daos/ingredient_dao.dart';
+import 'package:cookmergency/src/data/daos/ingredient_type_dao.dart';
 import 'package:cookmergency/src/data/daos/recipe_dao.dart';
 import 'package:cookmergency/src/data/daos/recipe_type_dao.dart';
 import 'package:cookmergency/src/data/moor_database.dart';
@@ -14,12 +17,23 @@ void main() {
     database = AppDatabase(VmDatabase.memory());
     recipeDao = RecipeDao(database);
 
-    // Create recipe to test against
+    // Create recipeTypes to test against
     RecipeTypeDao recipeTypeDao = RecipeTypeDao(database);
     await recipeTypeDao
         .insertRecipeType(RecipeTypesCompanion(name: Value('type')));
     await recipeTypeDao
         .insertRecipeType(RecipeTypesCompanion(name: Value('other_type')));
+
+    IngredientTypeDao ingredientTypeDao = IngredientTypeDao(database);
+    await ingredientTypeDao.insertIngredientType(
+        IngredientTypesCompanion(name: Value("some_type")));
+    IngredientDao ingredientDao = IngredientDao(database);
+    await ingredientDao.insertIngredient(IngredientsCompanion(
+        name: Value("ingredient1"), ingredientType: Value("some_type")));
+    await ingredientDao.insertIngredient(IngredientsCompanion(
+        name: Value("ingredient2"), ingredientType: Value("some_type")));
+    await ingredientDao.insertIngredient(IngredientsCompanion(
+        name: Value("ingredient3"), ingredientType: Value("some_type")));
   });
 
   tearDown(() async {
@@ -158,15 +172,238 @@ void main() {
   test(
       'fetchRecipeIds with no selected ingredients and types, returns all recipes',
       () async {
-    // add some ingredients, ias, recipes with different types
-    // TODO: Finish tests as soon as other tables have been tested
+    // add some recipes with different types
+    await recipeDao.insertRecipe(
+      RecipesCompanion(
+        id: Value(999),
+        title: Value('SOME_TITLE'),
+        imageUrl: Value('url'),
+        preparationText: Value('text'),
+        recipeType: Value('type'),
+        preparationTime: Value('19'),
+      ),
+    );
+
+    await recipeDao.insertRecipe(
+      RecipesCompanion(
+        id: Value(000),
+        title: Value('OTHER_TITLE'),
+        imageUrl: Value('url'),
+        preparationText: Value('text'),
+        recipeType: Value('other_type'),
+        preparationTime: Value('19'),
+      ),
+    );
+
+    // add some ingredientAmounts
+    IngredientAmountDao iaDao = IngredientAmountDao(database);
+    iaDao.insertIngredientAmount(
+      IngredientAmountsCompanion(
+        ingredientName: Value("ingredient1"),
+        recipeTitle: Value("SOME_TITLE"),
+        amount: Value(2),
+        amountUnit: Value("KG"),
+      ),
+    );
+
+    iaDao.insertIngredientAmount(
+      IngredientAmountsCompanion(
+        ingredientName: Value("ingredient2"),
+        recipeTitle: Value("SOME_TITLE"),
+        amount: Value(2),
+        amountUnit: Value("KG"),
+      ),
+    );
+
+    iaDao.insertIngredientAmount(
+      IngredientAmountsCompanion(
+        ingredientName: Value("ingredient2"),
+        recipeTitle: Value("OTHER_TITLE"),
+        amount: Value(2),
+        amountUnit: Value("KG"),
+      ),
+    );
+
+    // select chosen recipe types and ingredients
+    List<String> chosenRecipeTypes = [];
+    List<String> chosenIngredients = [];
+
+    List<int> ids =
+        await recipeDao.fetchRecipeIds(chosenRecipeTypes, chosenIngredients);
+
+    print(ids);
+
+    expect(ids.length, 2);
   });
 
   test(
       'fetchRecipeIds with only types selected retuns only recipes with the correct types',
-      () async {});
+      () async {
+    // add some recipes with different types
+    await recipeDao.insertRecipe(
+      RecipesCompanion(
+        id: Value(999),
+        title: Value('SOME_TITLE'),
+        imageUrl: Value('url'),
+        preparationText: Value('text'),
+        recipeType: Value('type'),
+        preparationTime: Value('19'),
+      ),
+    );
+
+    await recipeDao.insertRecipe(
+      RecipesCompanion(
+        id: Value(000),
+        title: Value('OTHER_TITLE'),
+        imageUrl: Value('url'),
+        preparationText: Value('text'),
+        recipeType: Value('other_type'),
+        preparationTime: Value('19'),
+      ),
+    );
+
+    // add some ingredientAmounts
+    IngredientAmountDao iaDao = IngredientAmountDao(database);
+    iaDao.insertIngredientAmount(
+      IngredientAmountsCompanion(
+        ingredientName: Value("ingredient1"),
+        recipeTitle: Value("SOME_TITLE"),
+        amount: Value(2),
+        amountUnit: Value("KG"),
+      ),
+    );
+
+    iaDao.insertIngredientAmount(
+      IngredientAmountsCompanion(
+        ingredientName: Value("ingredient2"),
+        recipeTitle: Value("SOME_TITLE"),
+        amount: Value(2),
+        amountUnit: Value("KG"),
+      ),
+    );
+
+    iaDao.insertIngredientAmount(
+      IngredientAmountsCompanion(
+        ingredientName: Value("ingredient2"),
+        recipeTitle: Value("OTHER_TITLE"),
+        amount: Value(2),
+        amountUnit: Value("KG"),
+      ),
+    );
+
+    // select chosen recipe types and ingredients
+    List<String> chosenRecipeTypes = ["other_type"];
+    List<String> chosenIngredients = [];
+
+    List<int> ids =
+        await recipeDao.fetchRecipeIds(chosenRecipeTypes, chosenIngredients);
+
+    print(ids);
+
+    expect(ids.length, 1);
+    expect(ids[0], 000);
+  });
 
   test(
       'fetchRecipeIds with selected ingredients retuns all recipes that only contain these recipes',
-      () async {});
+      () async {
+    // add some recipes with different types
+    await recipeDao.insertRecipe(
+      RecipesCompanion(
+        id: Value(999),
+        title: Value('SOME_TITLE'),
+        imageUrl: Value('url'),
+        preparationText: Value('text'),
+        recipeType: Value('type'),
+        preparationTime: Value('19'),
+      ),
+    );
+
+    await recipeDao.insertRecipe(
+      RecipesCompanion(
+        id: Value(000),
+        title: Value('OTHER_TITLE'),
+        imageUrl: Value('url'),
+        preparationText: Value('text'),
+        recipeType: Value('other_type'),
+        preparationTime: Value('19'),
+      ),
+    );
+
+    // add some ingredientAmounts
+    IngredientAmountDao iaDao = IngredientAmountDao(database);
+    iaDao.insertIngredientAmount(
+      IngredientAmountsCompanion(
+        ingredientName: Value("ingredient1"),
+        recipeTitle: Value("SOME_TITLE"),
+        amount: Value(2),
+        amountUnit: Value("KG"),
+      ),
+    );
+
+    iaDao.insertIngredientAmount(
+      IngredientAmountsCompanion(
+        ingredientName: Value("ingredient2"),
+        recipeTitle: Value("SOME_TITLE"),
+        amount: Value(2),
+        amountUnit: Value("KG"),
+      ),
+    );
+
+    iaDao.insertIngredientAmount(
+      IngredientAmountsCompanion(
+        ingredientName: Value("ingredient2"),
+        recipeTitle: Value("OTHER_TITLE"),
+        amount: Value(2),
+        amountUnit: Value("KG"),
+      ),
+    );
+
+    // select chosen recipe types and ingredients
+    List<String> chosenRecipeTypes = [];
+    List<String> chosenIngredients = ["ingredient2"];
+
+    List<int> ids =
+        await recipeDao.fetchRecipeIds(chosenRecipeTypes, chosenIngredients);
+
+    print(ids);
+
+    expect(ids.length, 1);
+    expect((await recipeDao.fetchRecipe(ids[0])).title, "OTHER_TITLE");
+  });
+
+  test('fetchRecipeTypes retuns only recipes with the correct types', () async {
+    // add some recipes with different types
+    await recipeDao.insertRecipe(
+      RecipesCompanion(
+        id: Value(999),
+        title: Value('SOME_TITLE'),
+        imageUrl: Value('url'),
+        preparationText: Value('text'),
+        recipeType: Value('type'),
+        preparationTime: Value('19'),
+      ),
+    );
+
+    await recipeDao.insertRecipe(
+      RecipesCompanion(
+        id: Value(000),
+        title: Value('OTHER_TITLE'),
+        imageUrl: Value('url'),
+        preparationText: Value('text'),
+        recipeType: Value('other_type'),
+        preparationTime: Value('19'),
+      ),
+    );
+
+    // select chosen recipe types and ingredients
+    List<String> chosenRecipeTypes = ["other_type"];
+
+    List<Recipe> ids = await recipeDao.fetchRecipesForTypes(chosenRecipeTypes);
+
+    print(ids);
+
+    expect(ids.length, 1);
+    expect(ids[0].id, 000);
+  });
 }

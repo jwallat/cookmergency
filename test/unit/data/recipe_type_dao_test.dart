@@ -18,7 +18,7 @@ void main() {
 
   test('recipeTypes can be added', () async {
     RecipeTypeDao recipeTypeDao = RecipeTypeDao(database);
-    final id = await recipeTypeDao
+    await recipeTypeDao
         .insertRecipeType(RecipeTypesCompanion(name: Value("type")));
     final recipeTypes = await recipeTypeDao.fetchAllRecipeTypes();
 

@@ -14,7 +14,7 @@ description: A new Flutter project.
 version: 1.0.0+1
 
 environment:
-  sdk: ">=2.1.0 <3.0.0"
+  sdk: ">=2.3.0 <3.0.0"
 
 dependencies:
   flutter:
@@ -36,7 +36,11 @@ dependencies:
 
 dev_dependencies:
   moor_generator: ^2.0.1
-  moor_ffi: ^0.2.0
+  moor_ffi:
+    git:
+      url: https://github.com/simolus3/moor.git
+      ref: develop
+      path: moor_ffi
   test: ^1.9.4
   build_runner: 
   mockito: ^4.1.1

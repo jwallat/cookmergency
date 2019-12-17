@@ -61,6 +61,7 @@ class App extends StatelessWidget {
       return MaterialPageRoute<dynamic>(
         builder: (BuildContext context) {
           final RecipeBloc recipeBloc = RecipeProvider.of(context);
+          print("Parsing recipeIdModel: ${settings.name}");
           final RecipeIdModel recipeIdModel =
               RecipeIdModel.fromString(settings.name.replaceFirst("/", ""));
 

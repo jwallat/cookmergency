@@ -41,6 +41,7 @@ class Repository {
     List<RecipeIdModel> idModels = await remoteRecipeProvider.fetchRecipeIds(
         chosenRecipeTypes, chosenIngredients);
     // Load recipeIds from local db
+
     idModels.addAll(await localRecipeProvider.fetchRecipeIds(
         chosenRecipeTypes, chosenIngredients));
     // Return all id-elements

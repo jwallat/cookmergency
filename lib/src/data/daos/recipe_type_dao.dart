@@ -16,4 +16,11 @@ class RecipeTypeDao extends DatabaseAccessor<AppDatabase>
       into(recipeTypes).insert(recipeType);
   Future deleteRecipeType(Insertable<RecipeType> recipeType) =>
       delete(recipeTypes).delete(recipeType);
+  Future<bool> containsRecipeType(String recipeType) async {
+    RecipeType rt = await (select(recipeTypes)
+          ..where((rt) => rt.name.equals(recipeType)))
+        .getSingle();
+
+    return rt == null;
+  }
 }

@@ -12,15 +12,15 @@ class RemoteRecipeProvider {
   }
 
   Future<List<String>> fetchRecipeTypes() async {
-    return null;
+    return [];
   }
 
   Future<List<String>> fetchIngredientTypes() async {
-    return null;
+    return [];
   }
 
   Future<List<String>> fetchIngredients() async {
-    return null;
+    return [];
   }
 
   Future<List<RecipeIdModel>> fetchRecipeIds(
@@ -28,7 +28,7 @@ class RemoteRecipeProvider {
     // TODO: Query Server over here
     //List<int> remoteIds = <int>[];
 
-    return null;
+    return [];
   }
 
   Future<bool> addRecipeType(String recipeType) async {

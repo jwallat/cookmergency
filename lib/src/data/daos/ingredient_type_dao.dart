@@ -17,4 +17,11 @@ class IngredientTypeDao extends DatabaseAccessor<AppDatabase>
       into(ingredientTypes).insert(ingredientType);
   Future deleteIngredientType(Insertable<IngredientType> ingredientType) =>
       delete(ingredientTypes).delete(ingredientType);
+  Future<bool> containsIngredientType(String ingredientType) async {
+    IngredientType it = await (select(ingredientTypes)
+          ..where((it) => it.name.equals(ingredientType)))
+        .getSingle();
+
+    return it == null;
+  }
 }

@@ -7,11 +7,6 @@ class Validators {
       if (title.isEmpty) {
         sink.addError("Please enter a title");
       } else {
-        // check if there is already an recipe with that title in db
-        // TODO: Add check in db
-        if (false) {
-          sink.addError("Title already taken, please choose another title!");
-        }
         sink.add(title);
       }
     },
