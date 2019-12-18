@@ -13,7 +13,6 @@ class Repository {
   final RemoteRecipeProvider remoteRecipeProvider = RemoteRecipeProvider();
 
   Future<void> initRemoteConnection() async {
-    print("initDBConnection");
     // await remoteRecipeProvider.initConnection();
   }
 
@@ -75,59 +74,6 @@ class Repository {
 
     // Add to remote queue
   }
-
-  // Future<bool> addRecipe(
-  //     String title,
-  //     String recipeType,
-  //     String preparationText,
-  //     String imageURL,
-  //     List<IngredientAmountModel> chosenIngredients) async {
-  //   // should probably await the add functions to ensure correct insertion order
-
-  //   RecipeModel recipe = RecipeModel.fromData(
-  //     title: title,
-  //     type: recipeType,
-  //     preparationText: preparationText,
-  //     imgUrl: imageURL,
-  //     ingredients: chosenIngredients,
-  //   );
-
-  //   // TODO: Add recipeType
-  //   if (await remoteRecipeProvider.addRecipeType(recipeType)) {
-  //     print("recipetype $recipeType added");
-  //   } else {
-  //     print("Error adding receipeType $recipeType");
-  //     return false;
-  //   }
-  //   // TODO: Add recipe
-  //   if (await remoteRecipeProvider.addRecipe(recipe)) {
-  //     print("recipe-item $title added");
-  //   } else {
-  //     print("Error adding recipe $title");
-  //     return false;
-  //   }
-  //   // TODO: Add single ingredients
-  //   for (IngredientAmountModel model in chosenIngredients) {
-  //     if (await remoteRecipeProvider.addIngredient(model.ingredientName)) {
-  //       print("ingredient added: ${model.ingredientName}");
-  //     } else {
-  //       print("Error adding ${model.ingredientName}");
-  //       return false;
-  //     }
-  //   }
-  //   // TODO: Add IngredientAmounts
-  //   for (IngredientAmountModel ia in chosenIngredients) {
-  //     if (await remoteRecipeProvider.addIngredientAmountModel(ia)) {
-  //       print(
-  //           "ingredientAmountModel added (${ia.ingredientName}, ${ia.amount}, ${ia.unit})");
-  //     } else {
-  //       print("Error adding (${ia.ingredientName}, ${ia.amount}, ${ia.unit})");
-  //       return false;
-  //     }
-  //   }
-
-  //   return true;
-  // }
 
   bool removeRecipe(String title) {
     return false;

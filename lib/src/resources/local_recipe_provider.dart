@@ -1,4 +1,5 @@
 import "dart:async";
+import 'package:cookmergency/main.dart';
 import 'package:cookmergency/src/data/daos/ingredient_amount_dao.dart';
 import 'package:cookmergency/src/data/daos/ingredient_dao.dart';
 import 'package:cookmergency/src/data/daos/ingredient_type_dao.dart';
@@ -12,7 +13,6 @@ import 'package:moor_flutter/moor_flutter.dart';
 import "../models/recipe_model.dart";
 
 class LocalRecipeProvider {
-  AppDatabase db;
   RecipeDao recipeDao;
   RecipeIdDao recipeIdDao;
   RecipeTypeDao recipeTypeDao;
@@ -21,10 +21,6 @@ class LocalRecipeProvider {
   IngredientAmountDao ingredientAmountDao;
 
   LocalRecipeProvider() {
-    this.db = AppDatabase(
-      FlutterQueryExecutor.inDatabaseFolder(
-          path: "db.sqlite", logStatements: true),
-    );
     this.recipeDao = db.recipeDao;
     this.recipeIdDao = db.recipeIdDao;
     this.recipeTypeDao = db.recipeTypeDao;
@@ -142,9 +138,14 @@ class LocalRecipeProvider {
     return true;
   }
 
+  Future<bool> deleteRecipe(RecipeModel recipe) async {
+    return recipeDao
+        .deleteRecipe(RecipesCompanion(id: Value(recipe.idModel.localId)));
+  }
+
   void insertIngredientType(String ingredientType) async {
     try {
-      if (!await ingredientTypeDao.containsIngredientType(ingredientType))
+      if (!(await ingredientTypeDao.containsIngredientType(ingredientType)))
         await ingredientTypeDao.insertIngredientType(IngredientTypesCompanion(
           name: Value(ingredientType),
         ));
@@ -156,7 +157,10 @@ class LocalRecipeProvider {
 
   void insertRecipeType(String recipeType) async {
     try {
-      if (!await recipeTypeDao.containsRecipeType(recipeType)) {
+      bool contains = await recipeTypeDao.containsRecipeType(recipeType);
+      print("Contains: $contains");
+      bool condition = !contains;
+      if (condition) {
         recipeTypeDao.insertRecipeType(RecipeTypesCompanion(
           name: Value(recipeType),
         ));
@@ -169,8 +173,8 @@ class LocalRecipeProvider {
 
   void insertIngredient(String ingredientName, String ingredientType) async {
     try {
-      if (!await ingredientDao.containsIngredient(
-          ingredientName, ingredientType)) {
+      if (!(await ingredientDao.containsIngredient(
+          ingredientName, ingredientType))) {
         ingredientDao.insertIngredient(IngredientsCompanion(
           name: Value(ingredientName),
           ingredientType: Value(ingredientType),

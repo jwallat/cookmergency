@@ -43,12 +43,13 @@ class RecipeListTile extends StatelessWidget {
         title: Text(recipe.title),
         subtitle: const Text("Maybe score on a later date"),
         leading: ClipRRect(
-          child: FailbackImage(
+          child: //Image.network(
+              FailbackImage(
             recipe.imgUrl,
             height: 90,
             width: 90,
             fit: BoxFit.fill,
-          ),
+          ).image,
           borderRadius: const BorderRadius.all(Radius.circular(3.0)),
         ),
         onTap: () =>

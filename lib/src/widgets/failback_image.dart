@@ -1,18 +1,20 @@
 import 'package:flutter/widgets.dart';
 
-class FailbackImage extends Image {
+class FailbackImage {
   final String failbackImageSrc = "https://moorestown-mall.com/noimage.gif";
+  Widget image;
 
   FailbackImage(String src, {double height, double width, BoxFit fit}) {
     try {
-      Image.network(
+      image = Image.network(
         src,
         height: height,
         width: width,
         fit: fit,
       );
     } catch (e) {
-      Image.network(
+      print("Image Exception: $e");
+      image = Image.network(
         failbackImageSrc,
         height: height,
         width: width,

@@ -205,6 +205,13 @@ void main() {
         preparationText: 'Text',
         ingredients: [iaModel]);
 
+    when(recipeTypeMock.containsRecipeType(any))
+        .thenAnswer((_) => Future.value(false));
+    when(ingredientTypeMock.containsIngredientType(any))
+        .thenAnswer((_) => Future.value(false));
+    when(ingredientMock.containsIngredient(any, any))
+        .thenAnswer((_) => Future.value(false));
+
     await provider.addRecipe(RECIPE_MODEL);
 
     verify(recipeTypeMock.insertRecipeType(any)).called(1);
