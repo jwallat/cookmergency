@@ -1,10 +1,10 @@
 import "dart:async";
 import 'dart:math';
 import "package:mysql1/mysql1.dart";
-import "../models/ingredient_model.dart";
+import "../models/ingredient_amount_model.dart";
 import "../models/recipe_model.dart";
 
-class RemoteRecipeProvider {
+class OldRemoteRecipeProvider {
   final ConnectionSettings s = ConnectionSettings(
     user: "cookmergency",
     password: "cookmergency",
@@ -14,7 +14,7 @@ class RemoteRecipeProvider {
   );
   MySqlConnection conn;
 
-  RemoteRecipeProvider();
+  OldRemoteRecipeProvider();
 
   Future<bool> isAvailable() async {
     conn = await MySqlConnection.connect(s);

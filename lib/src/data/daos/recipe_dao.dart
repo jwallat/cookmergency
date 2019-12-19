@@ -1,3 +1,4 @@
+import 'package:cookmergency/src/data/tables/recipeIds.dart';
 import 'package:cookmergency/src/data/tables/recipes.dart';
 import 'package:cookmergency/src/data/tables/ingredientAmounts.dart';
 import 'package:moor/moor.dart';
@@ -6,14 +7,15 @@ import 'dart:async';
 
 part 'recipe_dao.g.dart';
 
-@UseDao(tables: [Recipes, IngredientAmounts])
+@UseDao(tables: [Recipes, RecipeIds, IngredientAmounts])
 class RecipeDao extends DatabaseAccessor<AppDatabase> with _$RecipeDaoMixin {
   final AppDatabase db;
 
   RecipeDao(this.db) : super(db);
 
   Future insertRecipe(Insertable<Recipe> recipe) =>
-      into(recipes).insert(recipe);
+      into(recipes).insert(recipe).then((id) =>
+          into(recipeIds).insert(RecipeIdsCompanion(localId: Value(id))));
 
   Future deleteRecipe(Insertable<Recipe> recipe) {
     return delete(recipes).delete(recipe);

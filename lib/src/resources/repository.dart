@@ -2,15 +2,20 @@ import "dart:async";
 import 'package:cookmergency/src/models/recipe_id_model.dart';
 import 'package:tuple/tuple.dart';
 
-import "../models/ingredient_model.dart";
+import "../models/ingredient_amount_model.dart";
 import "../models/recipe_model.dart";
 import "../resources/remote_recipe_provider.dart";
 import "../resources/local_recipe_provider.dart";
 
+/// Handle item fetching and saving
 class Repository {
-  /// Handle item fetching and saving
-  final LocalRecipeProvider localRecipeProvider = LocalRecipeProvider();
-  final RemoteRecipeProvider remoteRecipeProvider = RemoteRecipeProvider();
+  LocalRecipeProvider localRecipeProvider = LocalRecipeProvider();
+  RemoteRecipeProvider remoteRecipeProvider = RemoteRecipeProvider();
+
+  Repository();
+
+  Repository.fromProviders(
+      {this.localRecipeProvider, this.remoteRecipeProvider});
 
   Future<void> initRemoteConnection() async {
     // await remoteRecipeProvider.initConnection();
@@ -36,23 +41,33 @@ class Repository {
 
   Future<List<RecipeIdModel>> fetchRecipeIds(
       List<String> chosenRecipeTypes, List<String> chosenIngredients) async {
+    List<RecipeIdModel> idModels = [];
+
     // Load recipeIds from remote DB
-    List<RecipeIdModel> idModels = await remoteRecipeProvider.fetchRecipeIds(
-        chosenRecipeTypes, chosenIngredients);
+    List<RecipeIdModel> remoteIdModels = await remoteRecipeProvider
+        .fetchRecipeIds(chosenRecipeTypes, chosenIngredients);
+
     // Load recipeIds from local db
+    List<RecipeIdModel> localIdModels = await localRecipeProvider
+        .fetchRecipeIds(chosenRecipeTypes, chosenIngredients);
 
-    idModels.addAll(await localRecipeProvider.fetchRecipeIds(
-        chosenRecipeTypes, chosenIngredients));
+    // Add remoteIds to localDB
+    await localRecipeProvider.addRemoteRecipeIds(remoteIdModels);
+
     // Return all id-elements
-
+    idModels.addAll(remoteIdModels);
+    idModels.addAll(localIdModels);
     return idModels;
   }
 
-  Future<RecipeModel> fetchRecipe(RecipeIdModel idModel) {
-    if (idModel.localId >= 0) {
+  Future<RecipeModel> fetchRecipe(RecipeIdModel idModel) async {
+    if (idModel.localId != null) {
       return localRecipeProvider.fetchRecipe(idModel.localId);
     } else {
-      return remoteRecipeProvider.fetchRecipe(idModel.remoteId);
+      RecipeModel recipe =
+          await remoteRecipeProvider.fetchRecipe(idModel.remoteId);
+      localRecipeProvider.addRecipe(recipe);
+      return recipe;
     }
   }
 
@@ -70,6 +85,7 @@ class Repository {
       ingredients: chosenIngredients,
     );
 
+    remoteRecipeProvider.addRecipe(recipe);
     return localRecipeProvider.addRecipe(recipe);
 
     // Add to remote queue

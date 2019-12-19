@@ -8,5 +8,6 @@ part of 'recipe_dao.dart';
 
 mixin _$RecipeDaoMixin on DatabaseAccessor<AppDatabase> {
   $RecipesTable get recipes => db.recipes;
+  $RecipeIdsTable get recipeIds => db.recipeIds;
   $IngredientAmountsTable get ingredientAmounts => db.ingredientAmounts;
 }
