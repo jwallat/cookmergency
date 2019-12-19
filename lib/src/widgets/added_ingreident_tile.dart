@@ -1,6 +1,6 @@
 import 'package:flutter/widgets.dart';
 import "package:flutter/material.dart";
-import "../models/ingredient_model.dart";
+import "../models/ingredient_amount_model.dart";
 
 class AddedIngredientTile extends StatelessWidget {
   final IngredientAmountModel model;

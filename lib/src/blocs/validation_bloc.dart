@@ -1,6 +1,6 @@
 import "dart:async";
 import "package:rxdart/rxdart.dart";
-import "../models/ingredient_model.dart";
+import "../models/ingredient_amount_model.dart";
 import "../resources/repository.dart";
 import "validators.dart";
 

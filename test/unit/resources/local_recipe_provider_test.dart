@@ -5,7 +5,7 @@ import 'package:cookmergency/src/data/daos/recipe_dao.dart';
 import 'package:cookmergency/src/data/daos/recipe_ids_dao.dart';
 import 'package:cookmergency/src/data/daos/recipe_type_dao.dart';
 import 'package:cookmergency/src/data/moor_database.dart';
-import 'package:cookmergency/src/models/ingredient_model.dart';
+import 'package:cookmergency/src/models/ingredient_amount_model.dart';
 import 'package:cookmergency/src/models/recipe_model.dart';
 import 'package:cookmergency/src/resources/local_recipe_provider.dart';
 import 'package:flutter_test/flutter_test.dart';

@@ -1,5 +1,5 @@
 import 'package:cookmergency/src/blocs/recipe_provider.dart';
-import 'package:cookmergency/src/models/ingredient_model.dart';
+import 'package:cookmergency/src/models/ingredient_amount_model.dart';
 import "package:flutter/material.dart";
 import "package:autocomplete_textfield/autocomplete_textfield.dart";
 import "../blocs/validation_provider.dart";

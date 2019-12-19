@@ -1,5 +1,5 @@
 import "package:flutter/material.dart";
-import "../models/ingredient_model.dart";
+import "../models/ingredient_amount_model.dart";
 import "../models/recipe_model.dart";
 
 class DetailsTabBar extends StatefulWidget {

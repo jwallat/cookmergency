@@ -1,7 +1,7 @@
 import 'package:cookmergency/src/data/moor_database.dart';
 import 'package:cookmergency/src/models/recipe_id_model.dart';
 import "package:mysql1/mysql1.dart";
-import "ingredient_model.dart";
+import "ingredient_amount_model.dart";
 
 class RecipeModel {
   RecipeIdModel idModel;

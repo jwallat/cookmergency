@@ -1,7 +1,7 @@
 import "dart:async";
 import 'package:cookmergency/src/models/recipe_id_model.dart';
 
-import "../models/ingredient_model.dart";
+import "../models/ingredient_amount_model.dart";
 import "../models/recipe_model.dart";
 
 class RemoteRecipeProvider {
