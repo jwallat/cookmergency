@@ -21,6 +21,6 @@ class RecipeTypeDao extends DatabaseAccessor<AppDatabase>
           ..where((rt) => rt.name.equals(recipeType)))
         .getSingle();
     print("recipeType for type: $recipeType : $rt");
-    return rt == null;
+    return rt != null;
   }
 }

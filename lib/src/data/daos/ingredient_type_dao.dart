@@ -22,6 +22,6 @@ class IngredientTypeDao extends DatabaseAccessor<AppDatabase>
           ..where((it) => it.name.equals(ingredientType)))
         .getSingle();
 
-    return it == null;
+    return it != null;
   }
 }

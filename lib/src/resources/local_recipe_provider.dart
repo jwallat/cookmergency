@@ -110,9 +110,9 @@ class LocalRecipeProvider {
   Future<bool> addRecipe(RecipeModel recipe) async {
     try {
       // all things should be catched internally and only delegated if something fatal happend and we need to rollback
-      insertRecipeType(recipe.type);
+      await insertRecipeType(recipe.type);
 
-      recipeDao.insertRecipe(RecipesCompanion(
+      await recipeDao.insertRecipe(RecipesCompanion(
         title: Value(recipe.title),
         recipeType: Value(recipe.type),
         imageUrl: Value(recipe.imgUrl),
@@ -121,11 +121,13 @@ class LocalRecipeProvider {
       ));
 
       for (IngredientAmountModel ingredientAmount in recipe.ingredients) {
-        insertIngredientType("<<placeholder>>");
+        await insertIngredientType("<<placeholder>>");
 
-        insertIngredient(ingredientAmount.ingredientName, "<<placeholder>>");
+        await insertIngredient(
+            ingredientAmount.ingredientName, "<<placeholder>>");
 
-        ingredientAmountDao.insertIngredientAmount(IngredientAmountsCompanion(
+        await ingredientAmountDao
+            .insertIngredientAmount(IngredientAmountsCompanion(
           recipeTitle: Value(recipe.title),
           ingredientName: Value(ingredientAmount.ingredientName),
           amount: Value(int.parse(ingredientAmount.amount)),
@@ -136,7 +138,7 @@ class LocalRecipeProvider {
       // catch different exepction
       print(
           "A fatal error occured during LocalRecipeProvider.addRecipe. Changes will be reversed: $trace");
-      recipeDao.deleteRecipe(RecipesCompanion(
+      await recipeDao.deleteRecipe(RecipesCompanion(
         title: Value(recipe.title),
         recipeType: Value(recipe.type),
         imageUrl: Value(recipe.imgUrl),
@@ -169,12 +171,13 @@ class LocalRecipeProvider {
     try {
       bool contains = await recipeTypeDao.containsRecipeType(recipeType);
       print("Contains: $contains");
-      bool condition = !contains;
-      if (condition) {
-        recipeTypeDao.insertRecipeType(RecipeTypesCompanion(
+      if (!contains) {
+        await recipeTypeDao.insertRecipeType(RecipeTypesCompanion(
           name: Value(recipeType),
         ));
       }
+      bool containsAfter = await recipeTypeDao.containsRecipeType(recipeType);
+      print("Contains after: $containsAfter");
     } catch (e, trace) {
       print(trace);
       throw e;
@@ -185,7 +188,7 @@ class LocalRecipeProvider {
     try {
       if (!(await ingredientDao.containsIngredient(
           ingredientName, ingredientType))) {
-        ingredientDao.insertIngredient(IngredientsCompanion(
+        await ingredientDao.insertIngredient(IngredientsCompanion(
           name: Value(ingredientName),
           ingredientType: Value(ingredientType),
         ));

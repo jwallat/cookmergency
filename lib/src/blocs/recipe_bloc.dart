@@ -6,30 +6,57 @@ import "../models/recipe_model.dart";
 import "../resources/repository.dart";
 
 class RecipeBloc {
-  final Repository repository = Repository();
+  Repository repository = Repository();
 
-  final PublishSubject<RecipeIdModel> _recipeFetcher =
+  PublishSubject<RecipeIdModel> _recipeFetcher =
       PublishSubject<RecipeIdModel>();
-  final BehaviorSubject<Map<RecipeIdModel, Future<RecipeModel>>> _recipeOutput =
+  BehaviorSubject<Map<RecipeIdModel, Future<RecipeModel>>> _recipeOutput =
       BehaviorSubject<Map<RecipeIdModel, Future<RecipeModel>>>();
 
-  final BehaviorSubject<List<RecipeIdModel>> _recipeIds =
+  BehaviorSubject<List<RecipeIdModel>> _recipeIds =
       BehaviorSubject<List<RecipeIdModel>>();
-  final ReplaySubject<List<String>> _recipeTypes =
-      ReplaySubject<List<String>>();
-  final ReplaySubject<List<String>> _ingredientTypes =
-      ReplaySubject<List<String>>();
-  final ReplaySubject<List<String>> _ingredients =
-      ReplaySubject<List<String>>();
+  ReplaySubject<List<String>> _recipeTypes = ReplaySubject<List<String>>();
+  ReplaySubject<List<String>> _ingredientTypes = ReplaySubject<List<String>>();
+  ReplaySubject<List<String>> _ingredients = ReplaySubject<List<String>>();
 
-  final Map<String, bool> _recipeTypesMap = <String, bool>{};
-  final Map<String, bool> _ingredientsMap = <String, bool>{};
+  Map<String, bool> _recipeTypesMap = <String, bool>{};
+  Map<String, bool> _ingredientsMap = <String, bool>{};
 
   List<String> recipeTypesList = <String>[];
   List<String> ingredientsList = <String>[];
   List<String> unitsList = <String>[];
 
   RecipeBloc() {
+    _recipeFetcher.stream
+        .transform<Map<RecipeIdModel, Future<RecipeModel>>>(
+            _recipeTransformer())
+        .pipe(_recipeOutput);
+  }
+
+  RecipeBloc.forTests(
+      ReplaySubject<List<String>> recipeTypes,
+      ReplaySubject<List<String>> ingredientTypes,
+      ReplaySubject<List<String>> ingredients,
+      BehaviorSubject<List<RecipeIdModel>> recipeIds,
+      BehaviorSubject<Map<RecipeIdModel, Future<RecipeModel>>> recipeOutput,
+      PublishSubject<RecipeIdModel> recipeFetcher,
+      Repository repository,
+      List<String> recipeTypesList,
+      List<String> ingredientsList,
+      Map<String, bool> recipeTypesMap,
+      Map<String, bool> ingredientsMap) {
+    this._recipeTypes = recipeTypes;
+    this._ingredientTypes = ingredientTypes;
+    this._ingredients = ingredients;
+    this._recipeIds = recipeIds;
+    this._recipeOutput = recipeOutput;
+    this._recipeFetcher = recipeFetcher;
+    this.repository = repository;
+    this.ingredientsList = ingredientsList;
+    this.recipeTypesList = recipeTypesList;
+    this._recipeTypesMap = recipeTypesMap;
+    this._ingredientsMap = ingredientsMap;
+
     _recipeFetcher.stream
         .transform<Map<RecipeIdModel, Future<RecipeModel>>>(
             _recipeTransformer())
