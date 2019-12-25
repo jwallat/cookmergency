@@ -1,3 +1,5 @@
+import 'package:cached_network_image/cached_network_image.dart';
+import 'package:cookmergency/src/widgets/rating_bar_widget.dart';
 import "package:flutter/material.dart";
 import "../models/ingredient_amount_model.dart";
 import "../models/recipe_model.dart";
@@ -25,130 +27,103 @@ class DetailsTabBarState extends State<DetailsTabBar> {
 
   @override
   Widget build(BuildContext context) {
-    // return SingleChildScrollView(
-    //   child: Column(
-    //     children: <Widget>[
-    //       Stack(
-    //         alignment: AlignmentDirectional.bottomCenter,
-    //         fit: StackFit.loose,
-    //         children: <Widget>[
-    //           // ImageSliderWidget(
-    //           //   imageUrls: <String>[recipe.imgUrl],
-    //           //   imageBorderRadius: BorderRadius.zero,
-    //           // ),
-    //           Image.network(
-    //             recipe.imgUrl,
-    //             fit: BoxFit.fill,
-    //             alignment: Alignment.topCenter,
-    //           ),
-    //           Container(
-    //             alignment: Alignment.center,
-    //             child: Text(
-    //               recipe.title,
-    //               style: const TextStyle(
-    //                 fontSize: 18,
-    //                 fontWeight: FontWeight.bold,
-    //               ),
-    //             ),
-    //             decoration: BoxDecoration(
-    //               color: Colors.white,
-    //               borderRadius: const BorderRadius.only(
-    //                 topLeft: Radius.circular(20),
-    //                 topRight: Radius.circular(20),
-    //               ),
-    //             ),
-    //             height: 40,
-    //           ),
-    //         ],
-    //       ),
-    //       Divider(),
-    //       Container(
-    //         child: const Text(
-    //           "Zubereitung",
-    //           style: TextStyle(
-    //             fontSize: 16,
-    //             fontWeight: FontWeight.bold,
-    //             // backgroundColor: Colors.amber,
-    //           ),
-    //           textAlign: TextAlign.left,
-    //         ),
-    //         margin: const EdgeInsets.only(left: 8, right: 8),
-    //       ),
-    //       buildDetailsText(),
-    //       Divider(),
-    //       Container(
-    //         child: const Text(
-    //           "Zutaten",
-    //           style: TextStyle(
-    //             fontSize: 16,
-    //             fontWeight: FontWeight.bold,
-    //           ),
-    //           textAlign: TextAlign.left,
-    //         ),
-    //         margin: const EdgeInsets.only(left: 8, right: 8, bottom: 8),
-    //       ),
-    //       buildIngredientsList(),
-    //     ],
-    //     crossAxisAlignment: CrossAxisAlignment.start,
-    //   ),
-    // );
     return ListView(
-      padding: const EdgeInsets.all(20),
       children: <Widget>[
         Container(
-          margin: const EdgeInsets.only(top: 80, bottom: 10),
-          child: Text(
+          // margin: const EdgeInsets.only(top: 20, bottom: 20),
+          child: ClipRRect(
+            child: CachedNetworkImage(
+              imageUrl: recipe.imgUrl,
+              errorWidget: (context, url, error) => Image.network(
+                "https://moorestown-mall.com/noimage.gif",
+              ),
+            ),
+            // borderRadius: const BorderRadius.all(Radius.circular(10)),
+          ),
+          // decoration: BoxDecoration(
+          //   boxShadow: <BoxShadow>[
+          //     BoxShadow(
+          //       color: Colors.grey,
+          //       blurRadius: 10.0,
+          //     )
+          //   ],
+          // ),
+        ),
+        Column(
+          mainAxisAlignment: MainAxisAlignment.start,
+          children: <Widget>[
+            buildTitleDetails(),
+            Divider(),
+            Container(
+              margin: const EdgeInsets.only(top: 10, bottom: 10, left: 20),
+              alignment: AlignmentDirectional.centerStart,
+              child: const Text(
+                "Ingredients",
+                style: TextStyle(
+                  fontSize: 22,
+                  fontWeight: FontWeight.bold,
+                ),
+                textAlign: TextAlign.left,
+              ),
+            ),
+            buildIngredientsList(),
+            Divider(),
+            Container(
+              margin: const EdgeInsets.only(top: 10, bottom: 10, left: 20),
+              alignment: AlignmentDirectional.centerStart,
+              child: const Text(
+                "Instructions",
+                style: TextStyle(
+                  fontSize: 22,
+                  fontWeight: FontWeight.bold,
+                  // backgroundColor: Colors.amber,
+                ),
+                textAlign: TextAlign.left,
+              ),
+            ),
+            buildDetailsText(),
+          ],
+        ),
+      ],
+    );
+  }
+
+  Widget buildTitleDetails() {
+    return Container(
+      margin: const EdgeInsets.only(top: 20, bottom: 4, left: 20),
+      alignment: AlignmentDirectional.topStart,
+      child: Column(
+        mainAxisAlignment: MainAxisAlignment.start,
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: <Widget>[
+          Text(
             recipe.title,
             style: const TextStyle(
               fontSize: 26,
+              fontWeight: FontWeight.bold,
             ),
+            textAlign: TextAlign.left,
           ),
-        ),
-        Container(
-          margin: const EdgeInsets.only(top: 20, bottom: 20),
-          child: ClipRRect(
-            child: Image.network(
-              recipe.imgUrl,
-              fit: BoxFit.fill,
-              alignment: Alignment.topCenter,
-            ),
-            borderRadius: const BorderRadius.all(Radius.circular(10)),
-          ),
-          decoration: BoxDecoration(
-            boxShadow: <BoxShadow>[
-              BoxShadow(
-                color: Colors.grey,
-                blurRadius: 10.0,
-              )
+          Row(
+            children: <Widget>[
+              Container(
+                child: RecipeRatingBar(),
+                margin: EdgeInsets.only(top: 12),
+              ),
+              Container(
+                margin: EdgeInsets.only(top: 10, left: 30),
+                child: Text(
+                  recipe.preparationTimeInMinutes ?? "30 min",
+                  style: const TextStyle(
+                    fontSize: 18,
+                    color: Colors.grey,
+                  ),
+                ),
+              ),
             ],
           ),
-        ),
-        Container(
-          child: const Text(
-            "Zutaten",
-            style: TextStyle(
-              fontSize: 22,
-              // fontWeight: FontWeight.bold,
-            ),
-            textAlign: TextAlign.left,
-          ),
-          margin: const EdgeInsets.only(bottom: 8),
-        ),
-        buildIngredientsList(),
-        Container(
-          child: const Text(
-            "Zubereitung",
-            style: TextStyle(
-              fontSize: 22,
-              // fontWeight: FontWeight.bold,
-              // backgroundColor: Colors.amber,
-            ),
-            textAlign: TextAlign.left,
-          ),
-          // margin: const EdgeInsets.only(left: 8, right: 8),
-        ),
-        buildDetailsText(),
-      ],
+        ],
+      ),
     );
   }
 
@@ -162,17 +137,20 @@ class DetailsTabBarState extends State<DetailsTabBar> {
       child: Column(
         children: ingredientList,
       ),
-      margin: const EdgeInsets.only(bottom: 40),
+      margin: const EdgeInsets.only(top: 8, bottom: 10, left: 20),
+      alignment: AlignmentDirectional.centerStart,
     );
   }
 
   Widget buildDetailsText() {
     return Container(
-      margin: const EdgeInsets.only(top: 8.0),
+      margin: const EdgeInsets.only(top: 8, bottom: 10, left: 20),
+      alignment: AlignmentDirectional.centerStart,
       child: Text(
         recipe.preparationText,
         style: const TextStyle(
-          fontSize: 16,
+          fontSize: 18,
+          color: Colors.grey,
         ),
       ),
     );
@@ -186,7 +164,7 @@ class DetailsTabBarState extends State<DetailsTabBar> {
             child: Text(
               ingredient.amount + " " + ingredient.unit + " ",
               style: const TextStyle(
-                fontSize: 16,
+                fontSize: 18,
               ),
             ),
             width: MediaQuery.of(context).size.width / 2 - 20,
@@ -208,11 +186,11 @@ class DetailsTabBarState extends State<DetailsTabBar> {
         ],
       ),
       decoration: BoxDecoration(
-        color: const Color(0xfff2f2f2),
+        color: const Color(0x2ff2f2f2),
         boxShadow: <BoxShadow>[
           BoxShadow(
             blurRadius: 0,
-            color: Colors.grey,
+            color: Colors.white,
           ),
         ],
       ),

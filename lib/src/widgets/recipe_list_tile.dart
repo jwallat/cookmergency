@@ -1,6 +1,6 @@
 import "dart:async";
+import 'package:cached_network_image/cached_network_image.dart';
 import 'package:cookmergency/src/models/recipe_id_model.dart';
-import 'package:cookmergency/src/widgets/failback_image.dart';
 import "package:flutter/material.dart";
 import "../blocs/recipe_provider.dart";
 import "../models/recipe_model.dart";
@@ -43,13 +43,16 @@ class RecipeListTile extends StatelessWidget {
         title: Text(recipe.title),
         subtitle: const Text("Maybe score on a later date"),
         leading: ClipRRect(
-          child: //Image.network(
-              FailbackImage(
-            recipe.imgUrl,
-            height: 90,
+          child: CachedNetworkImage(
+            imageUrl: recipe.imgUrl,
             width: 90,
-            fit: BoxFit.fill,
-          ).image,
+            height: 90,
+            placeholder: (context, url) => CircularProgressIndicator(),
+            errorWidget: (context, url, error) => Image.network(
+                "https://moorestown-mall.com/noimage.gif",
+                height: 90,
+                width: 90),
+          ),
           borderRadius: const BorderRadius.all(Radius.circular(3.0)),
         ),
         onTap: () =>
