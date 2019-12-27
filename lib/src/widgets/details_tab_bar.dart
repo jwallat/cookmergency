@@ -113,6 +113,16 @@ class DetailsTabBarState extends State<DetailsTabBar> {
               Container(
                 margin: EdgeInsets.only(top: 10, left: 30),
                 child: Text(
+                  recipe.type,
+                  style: const TextStyle(
+                    fontSize: 18,
+                    color: Colors.grey,
+                  ),
+                ),
+              ),
+              Container(
+                margin: EdgeInsets.only(top: 10, left: 30),
+                child: Text(
                   recipe.preparationTimeInMinutes ?? "30 min",
                   style: const TextStyle(
                     fontSize: 18,

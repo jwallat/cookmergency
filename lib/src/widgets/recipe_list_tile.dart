@@ -1,7 +1,10 @@
 import "dart:async";
+import 'dart:math';
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:cookmergency/src/models/recipe_id_model.dart';
+import 'package:cookmergency/src/widgets/rating_bar_widget.dart';
 import "package:flutter/material.dart";
+import 'package:flutter_rating_bar/flutter_rating_bar.dart';
 import "../blocs/recipe_provider.dart";
 import "../models/recipe_model.dart";
 import "../widgets/loading_container.dart";
@@ -41,7 +44,7 @@ class RecipeListTile extends StatelessWidget {
     return Card(
       child: ListTile(
         title: Text(recipe.title),
-        subtitle: const Text("Maybe score on a later date"),
+        subtitle: buildSubtitle(recipe),
         leading: ClipRRect(
           child: CachedNetworkImage(
             imageUrl: recipe.imgUrl,
@@ -58,6 +61,38 @@ class RecipeListTile extends StatelessWidget {
         onTap: () =>
             Navigator.pushNamed(context, "/${recipe.idModel.modelAsString()}"),
       ),
+    );
+  }
+
+  Widget buildSubtitle(RecipeModel recipe) {
+    Random rnd = Random();
+    return Row(
+      children: <Widget>[
+        Container(
+          child: RatingBar(
+            initialRating: rnd.nextDouble() * 5,
+            allowHalfRating: true,
+            itemBuilder: (context, index) => Icon(
+              Icons.star,
+              color: Colors.amber,
+            ),
+            itemCount: 5,
+            itemSize: 15.0,
+            onRatingUpdate: null,
+          ),
+          margin: EdgeInsets.only(top: 12),
+        ),
+        Container(
+          margin: EdgeInsets.only(top: 10, left: 30),
+          child: Text(
+            recipe.preparationTimeInMinutes ?? "30 min",
+            style: const TextStyle(
+              fontSize: 14,
+              color: Colors.grey,
+            ),
+          ),
+        ),
+      ],
     );
   }
 }

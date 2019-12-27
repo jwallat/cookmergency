@@ -107,6 +107,8 @@ class RecipeBloc {
     // Local data
     recipeTypes.item1.then((data) => _recipeTypes.add(data));
     addAllIfAbsent(recipeTypesList, await recipeTypes.item1);
+    // _recipeTypesMap.putIfAbsent(key, ifAbsent)
+
     // Remote data
     recipeTypes.item2.then((data) => _recipeTypes.add(data));
     addAllIfAbsent(recipeTypesList, await recipeTypes.item2);
